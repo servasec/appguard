@@ -20,22 +20,56 @@ type FindingInput struct {
 type ParserFunc func(data []byte, filename string) ([]FindingInput, error)
 
 var registry = map[string]ParserFunc{
-	"semgrep":      ParseSemgrep,
-	"trivy":        ParseTrivy,
-	"gitleaks":     ParseGitleaks,
-	"grype":        ParseGrype,
-	"snyk":         ParseSnyk,
-	"checkov":      ParseCheckov,
-	"trufflehog":   ParseTrufflehog,
-	"nuclei":       ParseNuclei,
-	"sarif":        ParseSarif,
-	"gosec":        ParseGosec,
-	"bandit":       ParseBandit,
-	"osv-scanner":  ParseOSVScanner,
-	"npm-audit":    ParseNpmAudit,
-	"tfsec":        ParseTfsec,
-	"kubescape":    ParseKubescape,
-	"kube-bench":   ParseKubeBench,
+	"semgrep":               ParseSemgrep,
+	"trivy":                 ParseTrivy,
+	"gitleaks":              ParseGitleaks,
+	"grype":                 ParseGrype,
+	"snyk":                  ParseSnyk,
+	"checkov":               ParseCheckov,
+	"trufflehog":            ParseTrufflehog,
+	"nuclei":                ParseNuclei,
+	"sarif":                 ParseSarif,
+	"gosec":                 ParseGosec,
+	"bandit":                ParseBandit,
+	"osv-scanner":           ParseOSVScanner,
+	"npm-audit":             ParseNpmAudit,
+	"tfsec":                 ParseTfsec,
+	"kubescape":             ParseKubescape,
+	"kube-bench":            ParseKubeBench,
+	"pip-audit":             ParsePipAudit,
+	"govulncheck":           ParseGovulncheck,
+	"terrascan":             ParseTerrascan,
+	"docker-bench-security": ParseDockerBenchSecurity,
+	"kube-linter":           ParseKubeLinter,
+	"detect-secrets":        ParseDetectSecrets,
+	"flawfinder":            ParseFlawfinder,
+	"dockle":                ParseDockle,
+	"horusec":               ParseHorusec,
+	"yarn-audit":            ParseYarnAudit,
+	"pnpm-audit":            ParsePnpmAudit,
+	"cargo-audit":           ParseCargoAudit,
+	"composer-audit":        ParseComposerAudit,
+	"njsscan":               ParseNjsscan,
+	"pmd":                   ParsePmd,
+	"cppcheck":              ParseCppcheck,
+	"cfn-nag":               ParseCfnNag,
+	"nmap":                  ParseNmap,
+	"nikto":                 ParseNikto,
+	"naabu":                 ParseNaabu,
+	"httpx":                 ParseHttpx,
+	"wpscan":                ParseWpscan,
+	"sslyze":                ParseSslyze,
+	"testssl":               ParseTestssl,
+	"ffuf":                  ParseFfuf,
+	"dirsearch":             ParseDirsearch,
+	"popeye":                ParsePopeye,
+	"kubeaudit":             ParseKubeaudit,
+	"trivy-operator":        ParseTrivyOperator,
+	"scoutsuite":            ParseScoutsuite,
+	"prowler":               ParseProwler,
+	"secretlint":            ParseSecretlint,
+	"noseyparker":           ParseNoseyparker,
+	"kics":                  ParseKics,
 }
 
 func Get(name string) (ParserFunc, bool) {
@@ -59,12 +93,18 @@ func DetectScannerType(data []byte) string {
 		return "sarif"
 	case strings.Contains(str, `"check_id":`):
 		return "semgrep"
+	case strings.Contains(str, `"VulnerabilityReport"`):
+		return "trivy-operator"
 	case strings.Contains(str, `"Target":`) && strings.Contains(str, `"Type":`):
 		return "trivy"
 	case strings.Contains(str, `"Description":`) && strings.Contains(str, `"StartLine":`) && strings.Contains(str, `"RuleID":`):
 		return "gitleaks"
 	case strings.Contains(str, `"matches":`) && strings.Contains(str, `"descriptor":`):
 		return "grype"
+	case strings.Contains(str, `"fix_versions":`) && strings.Contains(str, `"dependencies":`):
+		return "pip-audit"
+	case strings.Contains(str, `"fix_version":`):
+		return "wpscan"
 	case strings.Contains(str, `"vulns":`):
 		return "snyk"
 	case strings.Contains(str, `"results":`) && strings.Contains(str, `"passed_checks":`):
@@ -87,6 +127,60 @@ func DetectScannerType(data []byte) string {
 		return "kubescape"
 	case strings.Contains(str, `"node_type":`) && strings.Contains(str, `"test_number":`):
 		return "kube-bench"
+	case strings.Contains(str, `"osv":`) && strings.Contains(str, `"modules":`):
+		return "govulncheck"
+	case strings.Contains(str, `"violations":`) && strings.Contains(str, `"resource_type":`):
+		return "terrascan"
+	case strings.Contains(str, `"test_desc":`) && strings.Contains(str, `"test_number":`):
+		return "docker-bench-security"
+	case strings.Contains(str, `"diagnosticMessage":`):
+		return "kube-linter"
+	case strings.Contains(str, `"plugins_used":`):
+		return "detect-secrets"
+	case strings.Contains(str, `"coordinates":`):
+		return "flawfinder"
+	case strings.Contains(str, `"CIS-DI-`):
+		return "dockle"
+	case strings.Contains(str, `"analysisVulnerabilities":`):
+		return "horusec"
+	case strings.Contains(str, `"auditAdvisory":`):
+		return "yarn-audit"
+	case strings.Contains(str, `"auditReport":`):
+		return "pnpm-audit"
+	case strings.Contains(str, `"lockfile":`) && strings.Contains(str, `"advisory":`):
+		return "cargo-audit"
+	case strings.Contains(str, `"advisories":`) && strings.Contains(str, `"packageName":`):
+		return "composer-audit"
+	case strings.Contains(str, `"owasp":`):
+		return "njsscan"
+	case strings.Contains(str, `"formatVersion":`) && strings.Contains(str, `"pmdVersion":`):
+		return "pmd"
+	case strings.Contains(str, `"Cppcheck"`):
+		return "cppcheck"
+	case strings.Contains(str, `"logicalResourceId":`):
+		return "cfn-nag"
+	case strings.Contains(str, `"nmaprun":`):
+		return "nmap"
+	case strings.Contains(str, `"vulnerabilities":`) && strings.Contains(str, `"OSVDB":`):
+		return "nikto"
+	case strings.Contains(str, `"status_code":`) && strings.Contains(str, `"url":`):
+		return "httpx"
+	case strings.Contains(str, `"commands_results":`):
+		return "sslyze"
+	case strings.Contains(str, `"finding":`) && strings.Contains(str, `"severity":`):
+		return "testssl"
+	case strings.Contains(str, `"popeye":`):
+		return "popeye"
+	case strings.Contains(str, `"kubeaudit":`):
+		return "kubeaudit"
+	case strings.Contains(str, `"query_name":`) && strings.Contains(str, `"query_id":`):
+		return "kics"
+	case strings.Contains(str, `"checkId":`):
+		return "prowler"
+	case strings.Contains(str, `"messages":`) && strings.Contains(str, `"ruleId":`):
+		return "secretlint"
+	case strings.Contains(str, `"matched_content":`):
+		return "noseyparker"
 	}
 
 	if arr, ok := raw.([]any); ok && len(arr) > 0 {

@@ -12,14 +12,14 @@ type banditOutput struct {
 }
 
 type banditResult struct {
-	TestID     string     `json:"test_id"`
-	TestName   string     `json:"test_name"`
-	IssueText  string     `json:"issue_text"`
-	IssueSeverity string  `json:"issue_severity"`
-	IssueConfidence string `json:"issue_confidence"`
-	FileName   string     `json:"filename"`
-	LineNumber int        `json:"line_number"`
-	IssueCwe   *banditCwe `json:"issue_cwe"`
+	TestID          string     `json:"test_id"`
+	TestName        string     `json:"test_name"`
+	IssueText       string     `json:"issue_text"`
+	IssueSeverity   string     `json:"issue_severity"`
+	IssueConfidence string     `json:"issue_confidence"`
+	FileName        string     `json:"filename"`
+	LineNumber      int        `json:"line_number"`
+	IssueCwe        *banditCwe `json:"issue_cwe"`
 }
 
 type banditCwe struct {

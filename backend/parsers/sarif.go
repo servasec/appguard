@@ -8,14 +8,14 @@ import (
 )
 
 type sarifLog struct {
-	Version string    `json:"version"`
-	Schema  string    `json:"$schema"`
+	Version string     `json:"version"`
+	Schema  string     `json:"$schema"`
 	Runs    []sarifRun `json:"runs"`
 }
 
 type sarifRun struct {
-	Tool    sarifTool     `json:"tool"`
-	Results []sarifResult `json:"results"`
+	Tool       sarifTool       `json:"tool"`
+	Results    []sarifResult   `json:"results"`
 	Properties sarifProperties `json:"properties,omitempty"`
 }
 
@@ -33,18 +33,18 @@ type sarifDefaultConfiguration struct {
 }
 
 type sarifRule struct {
-	ID                   string                    `json:"id"`
-	Properties           sarifProperties           `json:"properties,omitempty"`
+	ID                   string                     `json:"id"`
+	Properties           sarifProperties            `json:"properties,omitempty"`
 	DefaultConfiguration *sarifDefaultConfiguration `json:"defaultConfiguration,omitempty"`
 }
 
 type sarifResult struct {
-	RuleID      string           `json:"ruleId"`
-	RuleIndex   int              `json:"ruleIndex"`
-	Level       string           `json:"level"`
-	Message     sarifMessage     `json:"message"`
-	Locations   []sarifLocation  `json:"locations"`
-	Properties  sarifProperties  `json:"properties,omitempty"`
+	RuleID     string          `json:"ruleId"`
+	RuleIndex  int             `json:"ruleIndex"`
+	Level      string          `json:"level"`
+	Message    sarifMessage    `json:"message"`
+	Locations  []sarifLocation `json:"locations"`
+	Properties sarifProperties `json:"properties,omitempty"`
 }
 
 type sarifMessage struct {
@@ -57,7 +57,7 @@ type sarifLocation struct {
 
 type sarifPhysicalLocation struct {
 	ArtifactLocation sarifArtifactLocation `json:"artifactLocation"`
-	Region           *sarifRegion           `json:"region,omitempty"`
+	Region           *sarifRegion          `json:"region,omitempty"`
 }
 
 type sarifArtifactLocation struct {

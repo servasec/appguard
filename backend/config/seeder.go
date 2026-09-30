@@ -122,6 +122,57 @@ func seedScannerTypes() {
 		{Name: "tfsec", Description: "Tfsec Terraform IaC (JSON)", Parser: "tfsec", Enabled: true},
 		{Name: "kubescape", Description: "Kubescape Kubernetes CSPM (JSON)", Parser: "kubescape", Enabled: true},
 		{Name: "kube-bench", Description: "Kube-bench CIS Kubernetes (JSON)", Parser: "kube-bench", Enabled: true},
+		{Name: "pip-audit", Description: "pip-audit Python SCA (JSON)", Parser: "pip-audit", Enabled: true},
+		{Name: "govulncheck", Description: "Govulncheck Go SCA (JSON)", Parser: "govulncheck", Enabled: true},
+		{Name: "terrascan", Description: "Terrascan IaC (JSON)", Parser: "terrascan", Enabled: true},
+		{Name: "docker-bench-security", Description: "Docker-bench-security CIS Docker (JSON)", Parser: "docker-bench-security", Enabled: true},
+		{Name: "kube-linter", Description: "Kube-linter Kubernetes lint (JSON)", Parser: "kube-linter", Enabled: true},
+		{Name: "detect-secrets", Description: "Detect-secrets secret detection (JSON)", Parser: "detect-secrets", Enabled: true},
+		{Name: "flawfinder", Description: "Flawfinder C/C++ SAST (JSON)", Parser: "flawfinder", Enabled: true},
+		{Name: "dockle", Description: "Dockle container image lint (JSON)", Parser: "dockle", Enabled: true},
+		{Name: "horusec", Description: "Horusec SAST (JSON)", Parser: "horusec", Enabled: true},
+		{Name: "yarn-audit", Description: "Yarn Audit SCA (JSONL)", Parser: "yarn-audit", Enabled: true},
+		{Name: "pnpm-audit", Description: "pnpm Audit SCA (JSON)", Parser: "pnpm-audit", Enabled: true},
+		{Name: "cargo-audit", Description: "Cargo audit Rust SCA (JSON)", Parser: "cargo-audit", Enabled: true},
+		{Name: "composer-audit", Description: "Composer audit PHP SCA (JSON)", Parser: "composer-audit", Enabled: true},
+		{Name: "njsscan", Description: "njsscan Node.js SAST (JSON)", Parser: "njsscan", Enabled: true},
+		{Name: "pmd", Description: "PMD Java SAST (JSON)", Parser: "pmd", Enabled: true},
+		{Name: "cppcheck", Description: "Cppcheck C/C++ SAST (JSONL)", Parser: "cppcheck", Enabled: true},
+		{Name: "cfn-nag", Description: "cfn-nag CloudFormation IaC (JSON)", Parser: "cfn-nag", Enabled: true},
+
+		{Name: "nmap", Description: "Nmap network scanner (XML/JSON)", Parser: "nmap", Enabled: true},
+
+		{Name: "nikto", Description: "Nikto web server scanner (JSON)", Parser: "nikto", Enabled: true},
+
+		{Name: "naabu", Description: "Naabu port scanner (JSON)", Parser: "naabu", Enabled: true},
+
+		{Name: "httpx", Description: "httpx web probing (JSONL)", Parser: "httpx", Enabled: true},
+
+		{Name: "wpscan", Description: "WPScan WordPress scanner (JSON)", Parser: "wpscan", Enabled: true},
+
+		{Name: "sslyze", Description: "SSLyze TLS/SSL scanner (JSON)", Parser: "sslyze", Enabled: true},
+
+		{Name: "testssl", Description: "testssl.sh TLS/SSL scanner (JSONL)", Parser: "testssl", Enabled: true},
+
+		{Name: "ffuf", Description: "ffuf web fuzzer (JSONL)", Parser: "ffuf", Enabled: true},
+
+		{Name: "dirsearch", Description: "dirsearch web path scanner (JSONL)", Parser: "dirsearch", Enabled: true},
+
+		{Name: "popeye", Description: "Popeye Kubernetes sanitizer (JSON)", Parser: "popeye", Enabled: true},
+
+		{Name: "kubeaudit", Description: "Kubeaudit Kubernetes audit (JSON)", Parser: "kubeaudit", Enabled: true},
+
+		{Name: "trivy-operator", Description: "Trivy Operator Kubernetes reports (JSON)", Parser: "trivy-operator", Enabled: true},
+
+		{Name: "scoutsuite", Description: "Scout Suite cloud security audit (JSON)", Parser: "scoutsuite", Enabled: true},
+
+		{Name: "prowler", Description: "Prowler cloud security assessment (JSON)", Parser: "prowler", Enabled: true},
+
+		{Name: "secretlint", Description: "Secretlint secret detection (JSON)", Parser: "secretlint", Enabled: true},
+
+		{Name: "noseyparker", Description: "Nosey Parker secret detection (JSON)", Parser: "noseyparker", Enabled: true},
+
+		{Name: "kics", Description: "KICS IaC security scanning (JSON)", Parser: "kics", Enabled: true},
 	}
 
 	for _, st := range scannerTypes {
