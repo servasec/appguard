@@ -130,7 +130,7 @@ func (g *GitHubIssueTracker) CreateIssue(cfg IssueTrackerConfig, finding IssueDa
 		return nil, fmt.Errorf("auth failed: %w", err)
 	}
 
-	labels := []string{"servasec", "security"}
+	labels := []string{"appguard", "security"}
 	if sevLabel, ok := SeverityLabels[finding.Severity]; ok {
 		labels = append(labels, sevLabel)
 	}

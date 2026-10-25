@@ -16,10 +16,10 @@ var ecdsaPublicKeyHex = "3059301306072a8648ce3d020106082a8648ce3d030107034200047
 var cachedPublicKey *ecdsa.PublicKey
 
 // PublicKeyHex returns the license signing public key in DER PKIX hex.
-// SSC_LICENSE_PUBLIC_KEY_HEX overrides the compiled-in default so managed
+// APPGUARD_LICENSE_PUBLIC_KEY_HEX overrides the compiled-in default so managed
 // instances can validate licenses issued by the control plane.
 func PublicKeyHex() string {
-	if v := os.Getenv("SSC_LICENSE_PUBLIC_KEY_HEX"); v != "" {
+	if v := os.Getenv("APPGUARD_LICENSE_PUBLIC_KEY_HEX"); v != "" {
 		return v
 	}
 	return ecdsaPublicKeyHex
@@ -68,7 +68,7 @@ type parsedLicense struct {
 }
 
 func expectedSubject() string {
-	return os.Getenv("SSC_SITE_NAME")
+	return os.Getenv("APPGUARD_SITE_NAME")
 }
 
 func ParseLicenseFull(licenseKey string) *parsedLicense {

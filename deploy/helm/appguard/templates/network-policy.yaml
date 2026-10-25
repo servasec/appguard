@@ -2,13 +2,13 @@
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "servasec.fullname" . }}-backend
+  name: {{ include "appguard.fullname" . }}-backend
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      {{- include "servasec.selectorLabels" . | nindent 6 }}
+      {{- include "appguard.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: backend
   policyTypes:
     - Ingress
@@ -17,7 +17,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              {{- include "servasec.selectorLabels" . | nindent 16 }}
+              {{- include "appguard.selectorLabels" . | nindent 16 }}
               app.kubernetes.io/component: frontend
       ports:
         - port: 8080
@@ -25,7 +25,7 @@ spec:
     - to:
         - podSelector:
             matchLabels:
-              {{- include "servasec.selectorLabels" . | nindent 16 }}
+              {{- include "appguard.selectorLabels" . | nindent 16 }}
               app.kubernetes.io/component: postgresql
       ports:
         - port: 5432
@@ -33,13 +33,13 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "servasec.fullname" . }}-frontend
+  name: {{ include "appguard.fullname" . }}-frontend
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      {{- include "servasec.selectorLabels" . | nindent 6 }}
+      {{- include "appguard.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: frontend
   policyTypes:
     - Ingress
@@ -49,13 +49,13 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: {{ include "servasec.fullname" . }}-postgresql
+  name: {{ include "appguard.fullname" . }}-postgresql
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
 spec:
   podSelector:
     matchLabels:
-      {{- include "servasec.selectorLabels" . | nindent 6 }}
+      {{- include "appguard.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: postgresql
   policyTypes:
     - Ingress
@@ -63,7 +63,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              {{- include "servasec.selectorLabels" . | nindent 16 }}
+              {{- include "appguard.selectorLabels" . | nindent 16 }}
               app.kubernetes.io/component: backend
       ports:
         - port: 5432

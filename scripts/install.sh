@@ -1,5 +1,5 @@
 #!/bin/sh
-# Servasec Install Script
+# AppGuard Install Script
 # Usage:
 #   curl -fsSL https://servasec.com/install.sh | sh            # one-liner: pulls images
 #   curl -fsSL https://servasec.com/install.sh | sh -s -- -i    # interactive
@@ -18,8 +18,8 @@ set -e
 #  Resolve script directory
 # ──────────────────────────────────────────────
 
-REPO_URL="https://github.com/servasec/servasec.git"
-INSTALL_DIR="/opt/servasec"
+REPO_URL="https://github.com/servasec/appguard.git"
+INSTALL_DIR="/opt/appguard"
 
 resolve_script_dir() {
     case "$0" in
@@ -47,7 +47,7 @@ CHECK_GIT=true
 PRO_ENABLED=false
 PRO_REPO_DIR=""
 BUILD_LOCAL=false
-SSC_VERSION=""
+APPGUARD_VERSION=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
@@ -55,7 +55,7 @@ while [ $# -gt 0 ]; do
         --no-check)       CHECK_GIT=false ;;
         --local-build)    BUILD_LOCAL=true ;;
         --version)
-            SSC_VERSION="$2"
+            APPGUARD_VERSION="$2"
             shift
             ;;
         --pro)            PRO_ENABLED=true ;;
@@ -77,8 +77,8 @@ while [ $# -gt 0 ]; do
             echo "  --local-build            Build images from source (default: pull from registry.gitlab.com)"
             echo "  --version <tag>          Install a specific release (default: latest)"
             echo "  --pro                    Enable pro features (private backend-pro image, requires docker login)"
-            echo "  --pro-repo <path>        Path to servasec-pro repo (local build only)"
-            echo "  --dir <path>             Install directory (default: /opt/servasec)"
+            echo "  --pro-repo <path>        Path to appguard-pro repo (local build only)"
+            echo "  --dir <path>             Install directory (default: /opt/appguard)"
             echo "  -h, --help               Show this help"
             exit 0
             ;;
@@ -117,13 +117,13 @@ dim()   { printf "${DIM}%s${NC}" "$1"; }
 
 COMPOSE_FILE="docker-compose.prod.yml"
 COMPOSE_BUILD_FILE="docker-compose.build.yml"
-SSC_COMPOSE="docker compose -f $COMPOSE_FILE"
-SSC_COMPOSE_BUILD="docker compose -f $COMPOSE_FILE -f $COMPOSE_BUILD_FILE"
-SSC_ENV_FILE=".env"
-SSC_EXAMPLE=".env.example"
+APPGUARD_COMPOSE="docker compose -f $COMPOSE_FILE"
+APPGUARD_COMPOSE_BUILD="docker compose -f $COMPOSE_FILE -f $COMPOSE_BUILD_FILE"
+APPGUARD_ENV_FILE=".env"
+APPGUARD_EXAMPLE=".env.example"
 
-DEFAULT_DOMAIN="servasec.local"
-DEFAULT_PRO_REPO="../servasec-pro"
+DEFAULT_DOMAIN="appguard.local"
+DEFAULT_PRO_REPO="../appguard-pro"
 
 # ──────────────────────────────────────────────
 #  Resolve the latest release tag (pull installs)
@@ -131,7 +131,7 @@ DEFAULT_PRO_REPO="../servasec-pro"
 
 resolve_latest_tag() {
     if command -v curl >/dev/null 2>&1; then
-        _tag=$(curl -fsSL --max-time 15 "https://api.github.com/repos/servasec/servasec/releases/latest" 2>/dev/null \
+        _tag=$(curl -fsSL --max-time 15 "https://api.github.com/repos/servasec/appguard/releases/latest" 2>/dev/null \
             | sed -n 's/.*"tag_name"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' | head -1)
         [ -n "$_tag" ] && { printf '%s' "$_tag"; return 0; }
     fi
@@ -172,12 +172,12 @@ if [ -z "$REPO_ROOT" ]; then
     # images are pulled from registry.gitlab.com.
     if [ "$BUILD_LOCAL" = false ] && command -v curl >/dev/null 2>&1; then
         printf "\n"
-        printf "\033[0;34mi\033[0m  Not inside Servasec repo - downloading release files (images will be pulled from registry.gitlab.com)...\n"
+        printf "\033[0;34mi\033[0m  Not inside AppGuard repo - downloading release files (images will be pulled from registry.gitlab.com)...\n"
 
-        if [ -n "$SSC_VERSION" ]; then
-            case "$SSC_VERSION" in
-                v*) TAG="$SSC_VERSION" ;;
-                *)  TAG="v$SSC_VERSION" ;;
+        if [ -n "$APPGUARD_VERSION" ]; then
+            case "$APPGUARD_VERSION" in
+                v*) TAG="$APPGUARD_VERSION" ;;
+                *)  TAG="v$APPGUARD_VERSION" ;;
             esac
         else
             TAG="$(resolve_latest_tag)"
@@ -187,10 +187,10 @@ if [ -z "$REPO_ROOT" ]; then
 
         mkdir -p "$INSTALL_DIR/scripts"
         for f in docker-compose.prod.yml docker-compose.build.yml .env.example; do
-            curl -fsSL --max-time 30 "https://raw.githubusercontent.com/servasec/servasec/$TAG/$f" -o "$INSTALL_DIR/$f" \
+            curl -fsSL --max-time 30 "https://raw.githubusercontent.com/servasec/appguard/$TAG/$f" -o "$INSTALL_DIR/$f" \
                 || fail "Failed to download $f for $TAG (check --version)."
         done
-        if curl -fsSL --max-time 30 "https://raw.githubusercontent.com/servasec/servasec/$TAG/scripts/upgrade.sh" -o "$INSTALL_DIR/scripts/upgrade.sh" 2>/dev/null; then
+        if curl -fsSL --max-time 30 "https://raw.githubusercontent.com/servasec/appguard/$TAG/scripts/upgrade.sh" -o "$INSTALL_DIR/scripts/upgrade.sh" 2>/dev/null; then
             chmod +x "$INSTALL_DIR/scripts/upgrade.sh"
         fi
 
@@ -200,7 +200,7 @@ if [ -z "$REPO_ROOT" ]; then
     else
         [ "$BUILD_LOCAL" = true ] || warn "curl not found - falling back to a full git clone for the deploy files."
         printf "\n"
-        printf "\033[0;34mi\033[0m  Not inside Servasec repo - cloning latest release...\n"
+        printf "\033[0;34mi\033[0m  Not inside AppGuard repo - cloning latest release...\n"
 
         command -v git >/dev/null 2>&1 || {
             printf "\033[0;31m✗\033[0m  git is required for remote install. Install git first.\n"
@@ -219,10 +219,10 @@ if [ -z "$REPO_ROOT" ]; then
         fi
 
         # Always checkout latest release tag, never default branch
-        if [ -n "$SSC_VERSION" ]; then
-            case "$SSC_VERSION" in
-                v*) CHECKOUT_TAG="$SSC_VERSION" ;;
-                *)  CHECKOUT_TAG="v$SSC_VERSION" ;;
+        if [ -n "$APPGUARD_VERSION" ]; then
+            case "$APPGUARD_VERSION" in
+                v*) CHECKOUT_TAG="$APPGUARD_VERSION" ;;
+                *)  CHECKOUT_TAG="v$APPGUARD_VERSION" ;;
             esac
         else
             CHECKOUT_TAG=$(git -C "$INSTALL_DIR" tag --list --sort=-version:refname | head -1)
@@ -332,7 +332,7 @@ fi
 #  3. Check .env.example exists
 # ──────────────────────────────────────────────
 
-[ -f "$SSC_EXAMPLE" ] || fail "File $SSC_EXAMPLE not found. Are you in the Servasec root directory?"
+[ -f "$APPGUARD_EXAMPLE" ] || fail "File $APPGUARD_EXAMPLE not found. Are you in the AppGuard root directory?"
 
 # ──────────────────────────────────────────────
 #  4. Generate secrets
@@ -545,7 +545,7 @@ if [ "$PRO_ENABLED" = true ]; then
     info "Setting up pro features..."
 
     if [ "$BUILD_LOCAL" = true ]; then
-        # Local build: requires the servasec-pro sources to compile the pro backend.
+        # Local build: requires the appguard-pro sources to compile the pro backend.
         if [ -z "$PRO_REPO_DIR" ]; then
             PRO_REPO_DIR="$DEFAULT_PRO_REPO"
         fi
@@ -563,8 +563,8 @@ if [ "$PRO_ENABLED" = true ]; then
         ok "Pro files copied from $PRO_REPO_DIR"
     else
         # Pull mode: use the private backend-pro image from registry.gitlab.com.
-        warn "Pro image is private and hosted in the servasec/servasec-pro project - authenticate first:"
-        warn "  docker login registry.gitlab.com -u deploy_token -p <deploy-token-of-servasec-pro>"
+        warn "Pro image is private and hosted in the servasec/appguard-pro project - authenticate first:"
+        warn "  docker login registry.gitlab.com -u deploy_token -p <deploy-token-of-appguard-pro>"
         ok "Will use the backend-pro image"
     fi
 fi
@@ -581,7 +581,7 @@ if [ "$INTERACTIVE" = false ]; then
     ADMIN_PASSWORD=$(generate_secret | head -c 16)
 fi
 
-if [ -f "$SSC_ENV_FILE" ]; then
+if [ -f "$APPGUARD_ENV_FILE" ]; then
     if [ "$INTERACTIVE" = true ]; then
         printf "  .env already exists. Overwrite? [y/N] "
         read -r CONFIRM </dev/tty
@@ -590,45 +590,45 @@ if [ -f "$SSC_ENV_FILE" ]; then
                 warn "Keeping existing .env"
                 ;;
             *)
-                cp "$SSC_EXAMPLE" "$SSC_ENV_FILE"
-                ok ".env overwritten from $SSC_EXAMPLE"
+                cp "$APPGUARD_EXAMPLE" "$APPGUARD_ENV_FILE"
+                ok ".env overwritten from $APPGUARD_EXAMPLE"
                 ;;
         esac
     else
         warn ".env already exists - keeping it (use -i to overwrite)"
     fi
 else
-    cp "$SSC_EXAMPLE" "$SSC_ENV_FILE"
-    ok ".env created from $SSC_EXAMPLE"
+    cp "$APPGUARD_EXAMPLE" "$APPGUARD_ENV_FILE"
+    ok ".env created from $APPGUARD_EXAMPLE"
 fi
 
-if [ -f "$SSC_ENV_FILE" ]; then
+if [ -f "$APPGUARD_ENV_FILE" ]; then
     update_env() {
-        if grep -q "^$1=" "$SSC_ENV_FILE" 2>/dev/null; then
-            sed -i.bak "s|^$1=.*|$1=$2|" "$SSC_ENV_FILE" && rm -f "$SSC_ENV_FILE.bak"
+        if grep -q "^$1=" "$APPGUARD_ENV_FILE" 2>/dev/null; then
+            sed -i.bak "s|^$1=.*|$1=$2|" "$APPGUARD_ENV_FILE" && rm -f "$APPGUARD_ENV_FILE.bak"
         else
-            echo "$1=$2" >> "$SSC_ENV_FILE"
+            echo "$1=$2" >> "$APPGUARD_ENV_FILE"
         fi
     }
 
     update_env "JWT_SECRET" "$JWT_SECRET"
     update_env "REFRESH_SECRET" "$REFRESH_SECRET"
     update_env "CSRF_SECRET" "$CSRF_SECRET"
-    update_env "SSC_FEATURES_ENCRYPTION_KEY" "$ENCRYPTION_KEY"
-    update_env "SSC_ADMIN_PASSWORD" "$ADMIN_PASSWORD"
-    update_env "SSC_PUBLIC_DOMAIN" "$DOMAIN"
-    update_env "SSC_PUBLIC_URL" "https://$DOMAIN"
-    update_env "SSC_SITE_NAME" "servasec"
-    update_env "SSC_REGISTRATION_ENABLED" "$REGISTRATION_ENABLED"
-    update_env "SSC_SEED_DATABASE" "true"
-    update_env "SSC_IMAGE_TAG" "${IMAGE_TAG:-latest}"
+    update_env "APPGUARD_FEATURES_ENCRYPTION_KEY" "$ENCRYPTION_KEY"
+    update_env "APPGUARD_ADMIN_PASSWORD" "$ADMIN_PASSWORD"
+    update_env "APPGUARD_PUBLIC_DOMAIN" "$DOMAIN"
+    update_env "APPGUARD_PUBLIC_URL" "https://$DOMAIN"
+    update_env "APPGUARD_SITE_NAME" "appguard"
+    update_env "APPGUARD_REGISTRATION_ENABLED" "$REGISTRATION_ENABLED"
+    update_env "APPGUARD_SEED_DATABASE" "true"
+    update_env "APPGUARD_IMAGE_TAG" "${IMAGE_TAG:-latest}"
 
     # Pro / build mode
     if [ "$PRO_ENABLED" = true ]; then
         if [ "$BUILD_LOCAL" = true ]; then
             update_env "BUILD_TAGS" "pro"
         else
-            update_env "SSC_BACKEND_IMAGE" "registry.gitlab.com/servasec/servasec-pro/backend"
+            update_env "APPGUARD_BACKEND_IMAGE" "registry.gitlab.com/servasec/appguard-pro/backend"
         fi
     fi
 
@@ -654,7 +654,7 @@ if [ -f "$SSC_ENV_FILE" ]; then
             -e 's|^SSO_OIDC_CLIENT_SECRET=.*|# SSO_OIDC_CLIENT_SECRET=|' \
             -e 's|^SSO_OIDC_ISSUER_URL=.*|# SSO_OIDC_ISSUER_URL=|' \
             -e 's|^SSO_OIDC_SCOPES=.*|# SSO_OIDC_SCOPES=|' \
-            "$SSC_ENV_FILE" 2>/dev/null && rm -f "$SSC_ENV_FILE.bak"
+            "$APPGUARD_ENV_FILE" 2>/dev/null && rm -f "$APPGUARD_ENV_FILE.bak"
     fi
 
     ok "Secrets written to .env"
@@ -666,19 +666,19 @@ fi
 
 printf "\n"
 if [ "$BUILD_LOCAL" = true ]; then
-    info "Building and starting Servasec..."
+    info "Building and starting AppGuard..."
     info "This may take a few minutes on first run..."
     echo ""
     if [ "$PRO_ENABLED" = true ]; then
-        BUILD_TAGS=pro $SSC_COMPOSE_BUILD up --build -d
+        BUILD_TAGS=pro $APPGUARD_COMPOSE_BUILD up --build -d
     else
-        $SSC_COMPOSE_BUILD up --build -d
+        $APPGUARD_COMPOSE_BUILD up --build -d
     fi
 else
-    info "Pulling images and starting Servasec..."
+    info "Pulling images and starting AppGuard..."
     info "Image tag: ${IMAGE_TAG:-latest}"
     echo ""
-    $SSC_COMPOSE up -d
+    $APPGUARD_COMPOSE up -d
 fi
 
 ok "Services started"
@@ -692,12 +692,12 @@ info "Waiting for services to be ready..."
 
 sleep 5
 
-RUNNING=$($SSC_COMPOSE ps --services --filter status=running 2>/dev/null | wc -l)
+RUNNING=$($APPGUARD_COMPOSE ps --services --filter status=running 2>/dev/null | wc -l)
 if [ "$RUNNING" -ge 2 ]; then
     ok " services running"
 else
     warn "Some services may not be running. Check logs:"
-    warn "  $SSC_COMPOSE logs --tail=20"
+    warn "  $APPGUARD_COMPOSE logs --tail=20"
 fi
 
 # ──────────────────────────────────────────────
@@ -708,9 +708,9 @@ echo ""
 echo "────────────────────────────────────────────────"
 echo ""
 if [ "$PRO_ENABLED" = true ]; then
-    printf "  ${GREEN}${BOLD}servasec (Pro) is running!${NC}\n"
+    printf "  ${GREEN}${BOLD}appguard (Pro) is running!${NC}\n"
 else
-    printf "  ${GREEN}${BOLD}servasec is running!${NC}\n"
+    printf "  ${GREEN}${BOLD}appguard is running!${NC}\n"
 fi
 echo ""
 echo "  Deployment direcory: ${INSTALL_DIR}"
@@ -725,8 +725,8 @@ else
 fi
 echo ""
 echo "  Useful commands:"
-echo "    View logs:    cd ${INSTALL_DIR} && $SSC_COMPOSE logs -f"
-echo "    Stop:         cd ${INSTALL_DIR} && $SSC_COMPOSE down"
+echo "    View logs:    cd ${INSTALL_DIR} && $APPGUARD_COMPOSE logs -f"
+echo "    Stop:         cd ${INSTALL_DIR} && $APPGUARD_COMPOSE down"
 echo "    Upgrade:      cd ${INSTALL_DIR} && bash ./scripts/upgrade.sh"
 echo ""
 echo "  Note: Change the admin password after first login."

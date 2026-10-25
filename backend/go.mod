@@ -1,4 +1,4 @@
-module github.com/servasec/servasec/backend
+module github.com/servasec/appguard/backend
 
 go 1.25.0
 

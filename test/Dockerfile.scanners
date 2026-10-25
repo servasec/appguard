@@ -1,4 +1,4 @@
-# Multi-tool scanner image for servasec fixture generation
+# Multi-tool scanner image for appguard fixture generation
 FROM alpine:3.19
 
 RUN apk add --no-cache \

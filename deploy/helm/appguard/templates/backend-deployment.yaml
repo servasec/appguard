@@ -1,9 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "servasec.backendName" . }}
+  name: {{ include "appguard.backendName" . }}
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
     app.kubernetes.io/component: backend
 spec:
   replicas: {{ .Values.replicaCount }}
@@ -14,12 +14,12 @@ spec:
       maxUnavailable: 1
   selector:
     matchLabels:
-      {{- include "servasec.selectorLabels" . | nindent 6 }}
+      {{- include "appguard.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: backend
   template:
     metadata:
       labels:
-        {{- include "servasec.labels" . | nindent 8 }}
+        {{- include "appguard.labels" . | nindent 8 }}
         app.kubernetes.io/component: backend
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -36,13 +36,13 @@ spec:
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: {{ include "servasec.fullname" . }}
+                name: {{ include "appguard.fullname" . }}
             - secretRef:
-                name: {{ include "servasec.fullname" . }}
+                name: {{ include "appguard.fullname" . }}
           env:
             - name: DATABASE_URL
-              value: {{ include "servasec.databaseUrl" . | quote }}
-            - name: SSC_SEED_DATABASE
+              value: {{ include "appguard.databaseUrl" . | quote }}
+            - name: APPGUARD_SEED_DATABASE
               value: "true"
           startupProbe:
             httpGet:

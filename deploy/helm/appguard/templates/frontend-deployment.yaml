@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "servasec.frontendName" . }}
+  name: {{ include "appguard.frontendName" . }}
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
     app.kubernetes.io/component: frontend
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
-      {{- include "servasec.selectorLabels" . | nindent 6 }}
+      {{- include "appguard.selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: frontend
   template:
     metadata:
       labels:
-        {{- include "servasec.labels" . | nindent 8 }}
+        {{- include "appguard.labels" . | nindent 8 }}
         app.kubernetes.io/component: frontend
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -31,7 +31,7 @@ spec:
               protocol: TCP
           envFrom:
             - configMapRef:
-                name: {{ include "servasec.fullname" . }}
+                name: {{ include "appguard.fullname" . }}
           livenessProbe:
             httpGet:
               path: /

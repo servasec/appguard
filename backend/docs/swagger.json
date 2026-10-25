@@ -2,10 +2,10 @@
     "swagger": "2.0",
     "info": {
         "description": "Security scanner management platform API",
-        "title": "Servasec API",
+        "title": "AppGuard API",
         "contact": {
             "name": "API Support",
-            "email": "support@servasec.local"
+            "email": "support@appguard.local"
         },
         "version": "1.0"
     },

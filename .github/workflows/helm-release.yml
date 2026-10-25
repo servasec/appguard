@@ -38,14 +38,15 @@ jobs:
 
       - name: Lint Helm chart
         run: |
-          helm lint deploy/helm/servasec
+          helm lint deploy/helm/appguard -f deploy/helm/appguard/ci/test-values.yaml
+          helm template appguard deploy/helm/appguard -f deploy/helm/appguard/ci/test-values.yaml >/dev/null
 
       - name: Package Helm chart
         env:
           EVENT_NAME: ${{ github.event_name }}
           MANUAL_CHART_VERSION: ${{ inputs.chart_version }}
         run: |
-          APP_VERSION="$(awk -F': ' '/^appVersion:/{print $2}' deploy/helm/servasec/Chart.yaml | tr -d '"')"
+          APP_VERSION="$(awk -F': ' '/^appVersion:/{print $2}' deploy/helm/appguard/Chart.yaml | tr -d '"')"
           if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
             if [ -z "$MANUAL_CHART_VERSION" ]; then
               echo "::error::chart_version input is required for manual (workflow_dispatch) publish"
@@ -55,12 +56,12 @@ jobs:
           else
             CHART_VERSION="${GITHUB_REF_NAME#v}"
           fi
-          helm package deploy/helm/servasec \
+          helm package deploy/helm/appguard \
             --version "$CHART_VERSION" \
             --app-version "$APP_VERSION" \
             --destination /tmp/helm-chart
 
       - name: Push to OCI registry
         run: |
-          helm push /tmp/helm-chart/servasec-*.tgz \
+          helm push /tmp/helm-chart/appguard-*.tgz \
             oci://registry.gitlab.com/${{ github.repository }}/helm

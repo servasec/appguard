@@ -1,7 +1,7 @@
-// @title Servasec API
+// @title AppGuard API
 // @version 1.0
-// @description servasec platform API
-// @contact.name servasec support
+// @description appguard platform API
+// @contact.name appguard support
 // @contact.email contact@servasec.com
 // @host localhost:8080
 // @BasePath /
@@ -21,15 +21,15 @@ import (
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/debug"
-	_ "github.com/servasec/servasec/backend/docs"
-	"github.com/servasec/servasec/backend/features"
-	"github.com/servasec/servasec/backend/middleware"
-	"github.com/servasec/servasec/backend/pro"
-	"github.com/servasec/servasec/backend/routes"
-	"github.com/servasec/servasec/backend/utils"
-	"github.com/servasec/servasec/backend/version"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/debug"
+	_ "github.com/servasec/appguard/backend/docs"
+	"github.com/servasec/appguard/backend/features"
+	"github.com/servasec/appguard/backend/middleware"
+	"github.com/servasec/appguard/backend/pro"
+	"github.com/servasec/appguard/backend/routes"
+	"github.com/servasec/appguard/backend/utils"
+	"github.com/servasec/appguard/backend/version"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -43,18 +43,18 @@ func getTrustedProxies() []string {
 }
 
 func main() {
+	utils.ValidateSecrets()
 	config.ConnectDB()
 	config.InitCasbin()
-	utils.ValidateSecrets()
 	utils.StartBlacklistCleanup()
 
-	features.Init(os.Getenv("SSC_LICENSE_KEY"))
+	features.Init(os.Getenv("APPGUARD_LICENSE_KEY"))
 	debug.Log("Enabled features: %v", features.F.EnabledFeatures())
 
 	pro.Risk.StartEPSSSync()
 
 	var gReleaseMode string
-	if os.Getenv("SSC_DEBUG_ENABLED") == "true" {
+	if os.Getenv("APPGUARD_DEBUG_ENABLED") == "true" {
 		gReleaseMode = gin.DebugMode
 	} else {
 		gReleaseMode = gin.ReleaseMode
@@ -68,9 +68,9 @@ func main() {
 	middleware.InitCSRFProtection()
 
 	router.SetTrustedProxies(getTrustedProxies())
-	allowedOrigin := os.Getenv("SSC_PUBLIC_URL")
+	allowedOrigin := os.Getenv("APPGUARD_PUBLIC_URL")
 	if allowedOrigin == "" {
-		log.Fatal("SSC_PUBLIC_URL environment variable is required but not set")
+		log.Fatal("APPGUARD_PUBLIC_URL environment variable is required but not set")
 	}
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{allowedOrigin},

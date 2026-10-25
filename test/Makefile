@@ -1,6 +1,6 @@
 .PHONY: all build-target build-scanners scan update-fixtures clean help
 
-TEST_TARGETS_DIR ?= ../../servasec-test-targets
+TEST_TARGETS_DIR ?= ../../appguard-test-targets
 PARSER_TESTDATA  := ../backend/parsers/testdata
 
 help: ## Show this help
@@ -11,20 +11,20 @@ all: build-target build-scanners scan ## Build everything + run all scanners
 	@echo "Run 'make update-fixtures' to copy reports to parser testdata"
 
 build-target: ## Build the vulnerable test target image
-	docker build -t servasec-test-target $(TEST_TARGETS_DIR)
+	docker build -t appguard-test-target $(TEST_TARGETS_DIR)
 	@echo "Saving image as tar..."
-	docker save servasec-test-target -o /tmp/servasec-test-target.tar
+	docker save appguard-test-target -o /tmp/appguard-test-target.tar
 
 build-scanners: ## Build the scanner tools image
-	docker build -t servasec-scanners -f Dockerfile.scanners .
+	docker build -t appguard-scanners -f Dockerfile.scanners .
 
 scan: build-target build-scanners ## Run all scanners against the test target
 	@echo "Running scanners..."
 	docker run --rm \
-		-v /tmp/servasec-test-target.tar:/target/image.tar:ro \
+		-v /tmp/appguard-test-target.tar:/target/image.tar:ro \
 		-v $(TEST_TARGETS_DIR):/target/files:ro \
 		-v $(PWD)/reports:/reports \
-		servasec-scanners
+		appguard-scanners
 	@echo ""
 	@echo "Reports generated in test/reports/"
 
@@ -45,7 +45,7 @@ update-fixtures: scan ## Copy scanner reports to parser testdata
 	@echo "Add test functions in your *_test.go files to parse these."
 
 clean: ## Remove generated reports and temp files
-	rm -f /tmp/servasec-test-target.tar
+	rm -f /tmp/appguard-test-target.tar
 	rm -rf reports/*.json
-	docker rmi servasec-test-target 2>/dev/null || true
-	docker rmi servasec-scanners 2>/dev/null || true
+	docker rmi appguard-test-target 2>/dev/null || true
+	docker rmi appguard-scanners 2>/dev/null || true

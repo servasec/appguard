@@ -2,41 +2,41 @@
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
-  name: {{ include "servasec.fullname" . }}
+  name: {{ include "appguard.fullname" . }}
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
 spec:
   entryPoints:
     {{- toYaml .Values.ingress.traefik.entryPoints | nindent 4 }}
   routes:
     - kind: Rule
-      match: Host(`{{ .Values.domain.name }}`) && PathPrefix(`/api`)
+      match: Host(`{{ required "domain.name must be set" .Values.domain.name }}`) && PathPrefix(`/api`)
       middlewares:
-        - name: {{ include "servasec.fullname" . }}-strip-api-prefix
-        - name: {{ include "servasec.fullname" . }}-security-headers
+        - name: {{ include "appguard.fullname" . }}-strip-api-prefix
+        - name: {{ include "appguard.fullname" . }}-security-headers
       services:
-        - name: {{ include "servasec.backendName" . }}
+        - name: {{ include "appguard.backendName" . }}
           port: 8080
     - kind: Rule
-      match: Host(`{{ .Values.domain.name }}`) && PathPrefix(`/.well-known`)
+      match: Host(`{{ required "domain.name must be set" .Values.domain.name }}`) && PathPrefix(`/.well-known`)
       middlewares:
-        - name: {{ include "servasec.fullname" . }}-security-headers
+        - name: {{ include "appguard.fullname" . }}-security-headers
       services:
-        - name: {{ include "servasec.backendName" . }}
+        - name: {{ include "appguard.backendName" . }}
           port: 8080
     - kind: Rule
-      match: Host(`{{ .Values.domain.name }}`) && PathPrefix(`/oauth`)
+      match: Host(`{{ required "domain.name must be set" .Values.domain.name }}`) && PathPrefix(`/oauth`)
       middlewares:
-        - name: {{ include "servasec.fullname" . }}-security-headers
+        - name: {{ include "appguard.fullname" . }}-security-headers
       services:
-        - name: {{ include "servasec.backendName" . }}
+        - name: {{ include "appguard.backendName" . }}
           port: 8080
     - kind: Rule
-      match: Host(`{{ .Values.domain.name }}`)
+      match: Host(`{{ required "domain.name must be set" .Values.domain.name }}`)
       middlewares:
-        - name: {{ include "servasec.fullname" . }}-security-headers
+        - name: {{ include "appguard.fullname" . }}-security-headers
       services:
-        - name: {{ include "servasec.frontendName" . }}
+        - name: {{ include "appguard.frontendName" . }}
           port: 3000
   {{- if or .Values.ingress.traefik.certResolver .Values.ingress.traefik.tlsSecretName }}
   tls:

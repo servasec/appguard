@@ -9,18 +9,18 @@ import (
 )
 
 // TestAgentBoundProLicense reproduit le payload exact que l'agent de contrôle
-// (servasec-brand/control/agent/license.mjs) émet pour un tenant pro lié au
+// (appguard-brand/control/agent/license.mjs) émet pour un tenant pro lié au
 // slug : claims {features:[pro...], quota:{groups:10,applications:25,
-// versions:25,users:0}, iss:servasec, sub:<slug>, exp}. La clé de signature
+// versions:25,users:0}, iss:appguard, sub:<slug>, exp}. La clé de signature
 // étant la même (paire dev), le backend community doit l'accepter quand
-// SSC_SITE_NAME matche le sub, et le rejeter sinon.
+// APPGUARD_SITE_NAME matche le sub, et le rejeter sinon.
 func TestAgentBoundProLicense(t *testing.T) {
 	token := agentProLicense("acme-test")
 
-	t.Setenv("SSC_SITE_NAME", "acme-test")
+	t.Setenv("APPGUARD_SITE_NAME", "acme-test")
 	pl := ParseLicenseFull(token)
 	if pl == nil {
-		t.Fatal("license liée avec SSC_SITE_NAME matchant le sub attendue valide")
+		t.Fatal("license liée avec APPGUARD_SITE_NAME matchant le sub attendue valide")
 	}
 	if !contains(pl.Features, "sso") {
 		t.Errorf("features attendues SIsSO; got %v", pl.Features)
@@ -31,15 +31,15 @@ func TestAgentBoundProLicense(t *testing.T) {
 	}
 
 	// Slug différent => rejet.
-	t.Setenv("SSC_SITE_NAME", "other")
+	t.Setenv("APPGUARD_SITE_NAME", "other")
 	if pl = ParseLicenseFull(token); pl != nil {
 		t.Error("license liée à un autre tenant attendue rejetée")
 	}
 
 	// Aucun slug d'instance => rejet.
-	os.Unsetenv("SSC_SITE_NAME")
+	os.Unsetenv("APPGUARD_SITE_NAME")
 	if pl = ParseLicenseFull(token); pl != nil {
-		t.Error("license liée attendue rejetée quand SSC_SITE_NAME est vide")
+		t.Error("license liée attendue rejetée quand APPGUARD_SITE_NAME est vide")
 	}
 }
 
@@ -60,7 +60,7 @@ func agentProLicense(subject string) string {
 		Features: []string{"audit_log", "risk_scoring", "advanced_reporting", "mcp_server", "sso"},
 		Quota:    quota,
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer:    "servasec",
+			Issuer:    "appguard",
 			Subject:   subject,
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * 24 * time.Hour)),
 		},

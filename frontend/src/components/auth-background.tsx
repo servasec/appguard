@@ -11,7 +11,7 @@ const phrases = [
   "Stay compliant with automated policies",
 ]
 
-const letters = "servasec".split("")
+const letters = "appguard".split("")
 
 const containerVariants = (reduce: boolean) => ({
   hidden: {},

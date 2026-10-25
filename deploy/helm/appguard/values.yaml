@@ -5,12 +5,12 @@ imagePullSecrets: []
 image:
   backend:
     # Community version (default). Pro users must point to the pro image
-    # provided with their license (e.g. registry.gitlab.com/servasec/servasec-pro/backend).
-    repository: registry.gitlab.com/servasec/servasec/backend
+    # provided with their license (e.g. registry.gitlab.com/servasec/appguard-pro/backend).
+    repository: registry.gitlab.com/servasec/appguard/backend
     tag: ""
     pullPolicy: IfNotPresent
   frontend:
-    repository: registry.gitlab.com/servasec/servasec/frontend
+    repository: registry.gitlab.com/servasec/appguard/frontend
     tag: ""
     pullPolicy: IfNotPresent
 
@@ -23,18 +23,21 @@ ingress:
   annotations: {}
   traefik:
     enabled: true
-    certResolver: ""
+    certResolver: "letsencrypt"
     tlsSecretName: ""
     entryPoints:
-      - web
+      - websecure
+  tls:
+    enabled: true
+    secretName: ""
 
 domain:
-  name: servasec.local
-  publicUrl: "https://servasec.local"
+  name: ""
+  publicUrl: ""
 
 config:
-  siteName: servasec
-  registrationEnabled: true
+  siteName: appguard
+  registrationEnabled: false
   debugEnabled: false
   apiPrefix: /api
   trustedProxiesCidr: "10.0.0.0/8"
@@ -42,8 +45,8 @@ config:
 postgresql:
   internal: true
   image: postgres:17
-  database: servasec-db
-  user: servasec
+  database: appguard-db
+  user: appguard
   password: ""
   externalUrl: ""
   resources:
@@ -59,6 +62,7 @@ secrets:
   jwtSecret: ""
   refreshSecret: ""
   csrfSecret: ""
+  encryptionKey: ""
   adminPassword: ""
   licenseKey: ""
   licensePublicKey: ""

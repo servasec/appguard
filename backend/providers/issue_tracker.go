@@ -61,7 +61,7 @@ func SeverityMeetsThreshold(severity, threshold string) bool {
 }
 
 func GetServaSecURL() string {
-	return os.Getenv("SSC_PUBLIC_URL")
+	return os.Getenv("APPGUARD_PUBLIC_URL")
 }
 
 func TruncateTitle(title string, maxLen int) string {
@@ -99,7 +99,7 @@ func FormatFindingBody(cfg IssueTrackerConfig, finding IssueData) string {
 	}
 
 	if cfg.ServaSecURL != "" && finding.FindingID > 0 {
-		body += fmt.Sprintf("---\n\n[View in servasec](%s/findings/%d)", cfg.ServaSecURL, finding.FindingID)
+		body += fmt.Sprintf("---\n\n[View in appguard](%s/findings/%d)", cfg.ServaSecURL, finding.FindingID)
 	}
 
 	return body

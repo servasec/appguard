@@ -72,7 +72,7 @@ func TestInitFreeOnly(t *testing.T) {
 
 func TestInitWithEnvIgnored(t *testing.T) {
 	os.Clearenv()
-	os.Setenv("SSC_PRO_AUDIT_LOG", "true")
+	os.Setenv("APPGUARD_PRO_AUDIT_LOG", "true")
 	F = nil
 
 	r := Init("")

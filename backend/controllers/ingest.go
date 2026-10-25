@@ -9,13 +9,13 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
-	"github.com/servasec/servasec/backend/parsers"
-	"github.com/servasec/servasec/backend/pro"
-	"github.com/servasec/servasec/backend/providers"
-	"github.com/servasec/servasec/backend/services"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
+	"github.com/servasec/appguard/backend/parsers"
+	"github.com/servasec/appguard/backend/pro"
+	"github.com/servasec/appguard/backend/providers"
+	"github.com/servasec/appguard/backend/services"
+	"github.com/servasec/appguard/backend/utils"
 	"gorm.io/gorm"
 )
 

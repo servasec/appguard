@@ -16,7 +16,7 @@ interface Slide {
 
 const slides: Slide[] = [
   {
-    title: "Welcome to servasec",
+    title: "Welcome to appguard",
     description:
       "Your vulnerability management platform. Centralize, analyze, and track security findings across all your applications.",
     isLogo: true,
@@ -72,7 +72,7 @@ export function OnboardingModal({ open, onComplete, user }: OnboardingModalProps
   const isFirst = step === 0;
 
   const isDark = resolvedTheme === "dark" || resolvedTheme === "catppuccin" || resolvedTheme === "github" || resolvedTheme === "nord";
-  const markSrc = "/assets/servasec-mark.svg";
+  const markSrc = "/assets/appguard-mark.svg";
   const imgSrc = slide.image
     ? isDark && slide.image.dark
       ? slide.image.dark
@@ -176,7 +176,7 @@ export function OnboardingModal({ open, onComplete, user }: OnboardingModalProps
                   <div className="flex flex-col items-center text-center pt-4">
                     <div className="mb-5">
                       <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-                        <img src={markSrc} alt="servasec" className="w-9 h-9" />
+                        <img src={markSrc} alt="appguard" className="w-9 h-9" />
                       </div>
                     </div>
                     <h2 className="text-lg font-semibold mb-2">{slide.title}</h2>
