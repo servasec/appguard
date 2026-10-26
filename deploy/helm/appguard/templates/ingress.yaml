@@ -2,45 +2,51 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "servasec.fullname" . }}
+  name: {{ include "appguard.fullname" . }}
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
   annotations:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   {{- with .Values.ingress.className }}
   ingressClassName: {{ . | quote }}
   {{- end }}
+  {{- if .Values.ingress.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ required "domain.name must be set" .Values.domain.name | quote }}
+      secretName: {{ required "ingress.tls.secretName is required for standard ingress TLS" .Values.ingress.tls.secretName | quote }}
+  {{- end }}
   rules:
-    - host: {{ .Values.domain.name | quote }}
+    - host: {{ required "domain.name must be set" .Values.domain.name | quote }}
       http:
         paths:
           - path: /api
             pathType: Prefix
             backend:
               service:
-                name: {{ include "servasec.backendName" . }}
+                name: {{ include "appguard.backendName" . }}
                 port:
                   number: 8080
           - path: /.well-known
             pathType: Prefix
             backend:
               service:
-                name: {{ include "servasec.backendName" . }}
+                name: {{ include "appguard.backendName" . }}
                 port:
                   number: 8080
           - path: /oauth
             pathType: Prefix
             backend:
               service:
-                name: {{ include "servasec.backendName" . }}
+                name: {{ include "appguard.backendName" . }}
                 port:
                   number: 8080
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ include "servasec.frontendName" . }}
+                name: {{ include "appguard.frontendName" . }}
                 port:
                   number: 3000
 {{- end }}

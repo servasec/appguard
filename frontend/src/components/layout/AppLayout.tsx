@@ -23,10 +23,13 @@ import {
   ScrollText,
   ScanLine,
   ShieldAlert,
+  Menu,
+  X,
 } from "lucide-react"
 import { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import type { User as UserProfile } from "@/lib/types"
+import { Brand } from "@/components/brand"
 
 interface NavItem {
   label: string
@@ -166,6 +169,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const { loggedIn, user, logout, authChecked } = useAuth()
   const { theme, setTheme } = useTheme()
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const sidebarCollapsed = collapsed && !mobileOpen
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -173,7 +178,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   }, [])
 
   useEffect(() => {
-    const saved = localStorage.getItem("servasec-sidebar-collapsed")
+    const saved = localStorage.getItem("appguard-sidebar-collapsed")
     if (saved === "true") {
       setCollapsed(true)
     }
@@ -181,9 +186,22 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      localStorage.setItem("servasec-sidebar-collapsed", String(collapsed))
+      localStorage.setItem("appguard-sidebar-collapsed", String(collapsed))
     }
   }, [collapsed])
+
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [router.asPath])
+
+  useEffect(() => {
+    if (!mobileOpen) return
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMobileOpen(false)
+    }
+    window.addEventListener("keydown", closeOnEscape)
+    return () => window.removeEventListener("keydown", closeOnEscape)
+  }, [mobileOpen])
 
   const isPublicPage =
     router.pathname === "/login" || router.pathname === "/register"
@@ -203,23 +221,37 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="h-screen overflow-hidden bg-background flex">
+      <header className="fixed inset-x-0 top-0 z-30 flex h-12 items-center justify-between border-b bg-background px-4 md:hidden">
+        <Link href="/" aria-label="AppGuard home"><Brand /></Link>
+        <button
+          type="button"
+          aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
+        >
+          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
+      </header>
+      {mobileOpen && <button className="fixed inset-0 z-40 bg-black/30 md:hidden" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
       <aside
-        className={`flex flex-col bg-sidebar shrink-0 transition-all duration-200 ${
-          collapsed ? "w-16" : "w-64"
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-sidebar shrink-0 transition-transform duration-200 md:relative md:z-auto md:translate-x-0 ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        } ${collapsed ? "md:w-16" : "md:w-64"}`}
       >
-        <Link href="/" className="h-14 flex items-center gap-3 px-4 shrink-0 hover:opacity-80 transition-opacity">
-          <img
-            src="/assets/servasec-mark.svg"
-            alt="servasec"
-            className="h-6 w-6 shrink-0"
-          />
-          {!collapsed && (
-            <span className="text-sm font-bold tracking-tight text-sidebar-foreground">
-              servasec
-            </span>
-          )}
-        </Link>
+        <div className="h-14 flex items-center justify-between px-4 shrink-0">
+          <Link href="/" className="flex min-w-0 items-center gap-3 hover:opacity-80 transition-opacity" onClick={() => setMobileOpen(false)}>
+            <Brand collapsed={sidebarCollapsed} />
+          </Link>
+          <button
+            type="button"
+            aria-label="Close navigation"
+            onClick={() => setMobileOpen(false)}
+            className="flex h-9 w-9 items-center justify-center text-muted-foreground hover:text-foreground md:hidden"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
 
         <nav className="flex-1 overflow-y-auto py-3 space-y-1">
           {navGroups.map((group) => {
@@ -232,7 +264,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
             return (
               <div key={group.label}>
-                {!collapsed && (
+                {!sidebarCollapsed && (
                   <div className="px-4 py-1.5">
                     <span className="text-xs font-semibold text-sidebar-foreground/60">
                       {group.label}
@@ -245,20 +277,21 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                     <Link
                       key={item.href}
                       href={item.href}
+                      onClick={() => setMobileOpen(false)}
                       className={`relative flex items-center h-9 text-sm transition-colors ${
-                        collapsed ? "justify-center" : "gap-3 px-4"
+                        sidebarCollapsed ? "justify-center" : "gap-3 px-4"
                       } ${
                         active
                           ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
                           : "text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-foreground"
                       }`}
-                      title={collapsed ? item.label : undefined}
+                      title={sidebarCollapsed ? item.label : undefined}
                     >
                       {active && (
                         <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary" />
                       )}
                       <span className="shrink-0">{item.icon}</span>
-                      {!collapsed && <span>{item.label}</span>}
+                      {!sidebarCollapsed && <span>{item.label}</span>}
                     </Link>
                   )
                 })}
@@ -272,7 +305,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
               className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-foreground w-full transition-colors ${
-                collapsed ? "justify-center" : ""
+                sidebarCollapsed ? "justify-center" : ""
               }`}
             >
               {theme === "dark" || theme === "catppuccin" || theme === "github" || theme === "nord" ? (
@@ -280,17 +313,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
               ) : (
                 <Moon className="h-4 w-4 shrink-0" />
               )}
-              {!collapsed && (
+              {!sidebarCollapsed && (
                 <span>{theme === "light" ? "Dark mode" : "Light mode"}</span>
               )}
             </button>
           )}
 
-          <UserMenu user={user} onLogout={handleLogout} collapsed={collapsed} />
+          <UserMenu user={user} onLogout={handleLogout} collapsed={collapsed && !mobileOpen} />
 
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground w-full transition-colors ${
+            className={`hidden md:flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground w-full transition-colors ${
               collapsed ? "justify-center" : ""
             }`}
           >
@@ -304,8 +337,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <main className="flex-1 flex flex-col min-w-0 min-h-0 pt-6 lg:pt-8 pr-6 lg:pr-8 pb-6 lg:pb-8">
-        <div id="main-scroll" className="bg-card rounded-xl border shadow-sm flex-1 min-h-0 overflow-y-auto p-6 lg:p-8">
+      <main className="flex-1 flex flex-col min-w-0 min-h-0 pt-14 md:pt-2 px-0 md:pl-0 md:pr-2 pb-0 md:pb-2">
+        <div id="main-scroll" className="bg-card rounded-none md:rounded-xl border-0 md:border border-border/60 flex-1 min-h-0 overflow-y-auto p-4 md:p-6">
           {children}
         </div>
         <BackToTop />

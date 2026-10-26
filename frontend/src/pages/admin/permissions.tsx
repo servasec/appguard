@@ -277,7 +277,7 @@ export default function PermissionsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Grant permission</DialogTitle>
-            <DialogDescription>Grant access to a specific resource.</DialogDescription>
+            <DialogDescription>Grant read or write access to one application or group.</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleGrant}>
             <div className="grid gap-4 py-4">
@@ -339,7 +339,6 @@ export default function PermissionsPage() {
                   <SelectContent>
                     <SelectItem value="read">Read</SelectItem>
                     <SelectItem value="write">Write</SelectItem>
-                    <SelectItem value="*">* (All)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

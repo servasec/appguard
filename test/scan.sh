@@ -7,7 +7,7 @@ TARGET_IMAGE="/target/image.tar"
 
 mkdir -p "$REPORTS_DIR"
 
-echo "=== servasec scanner fixture generator ==="
+echo "=== appguard scanner fixture generator ==="
 echo ""
 
 # --- Container scanners ---

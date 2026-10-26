@@ -1,5 +1,5 @@
 apiVersion: v2
-name: servasec
+name: appguard
 description: ASPM (Application Security Posture Management) platform
 type: application
 version: 2.4.3

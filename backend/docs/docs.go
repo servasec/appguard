@@ -11,7 +11,7 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "contact": {
             "name": "API Support",
-            "email": "support@servasec.local"
+            "email": "support@appguard.local"
         },
         "version": "{{.Version}}"
     },
@@ -4156,7 +4156,7 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "Servasec API",
+	Title:            "AppGuard API",
 	Description:      "Security scanner management platform API",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,

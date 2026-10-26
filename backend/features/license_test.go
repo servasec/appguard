@@ -211,12 +211,12 @@ func signTestLicenseSubject(subject string, features []string, expiresAt *time.T
 }
 
 func TestParseLicense_SubjectBinding(t *testing.T) {
-	t.Setenv("SSC_SITE_NAME", "atmos-test")
+	t.Setenv("APPGUARD_SITE_NAME", "atmos-test")
 
 	// Bound to the matching slug => valid.
 	token := signTestLicenseSubject("atmos-test", []string{FeatureAuditLog}, nil)
 	if result := ParseLicense(token); result == nil {
-		t.Fatal("expected license matching SSC_SITE_NAME to be accepted")
+		t.Fatal("expected license matching APPGUARD_SITE_NAME to be accepted")
 	}
 
 	// Bound to a different slug => rejected.
@@ -227,29 +227,29 @@ func TestParseLicense_SubjectBinding(t *testing.T) {
 }
 
 func TestParseLicense_SubjectBindingNoSiteName(t *testing.T) {
-	os.Unsetenv("SSC_SITE_NAME")
+	os.Unsetenv("APPGUARD_SITE_NAME")
 
 	// A bound license must be rejected when the instance has no slug set.
 	token := signTestLicenseSubject("atmos-test", []string{FeatureAuditLog}, nil)
 	if result := ParseLicense(token); result != nil {
-		t.Errorf("expected bound license rejected when SSC_SITE_NAME is empty, got %v", result)
+		t.Errorf("expected bound license rejected when APPGUARD_SITE_NAME is empty, got %v", result)
 	}
 
 	// An unbound license (no sub) is accepted regardless.
 	unbound := signTestLicense([]string{FeatureAuditLog}, nil)
 	if result := ParseLicense(unbound); result == nil {
-		t.Error("expected unbound license accepted when SSC_SITE_NAME is empty")
+		t.Error("expected unbound license accepted when APPGUARD_SITE_NAME is empty")
 	}
 }
 
 func TestPublicKeyHex_EnvOverride(t *testing.T) {
 	cachedPublicKey = nil
-	t.Setenv("SSC_LICENSE_PUBLIC_KEY_HEX", "abcd")
+	t.Setenv("APPGUARD_LICENSE_PUBLIC_KEY_HEX", "abcd")
 	if got := PublicKeyHex(); got != "abcd" {
 		t.Errorf("expected env override, got %s", got)
 	}
 	cachedPublicKey = nil
-	os.Unsetenv("SSC_LICENSE_PUBLIC_KEY_HEX")
+	os.Unsetenv("APPGUARD_LICENSE_PUBLIC_KEY_HEX")
 	if got := PublicKeyHex(); got != ecdsaPublicKeyHex {
 		t.Errorf("expected compiled-in default, got %s", got)
 	}

@@ -2,9 +2,9 @@
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: {{ include "servasec.fullname" . }}-security-headers
+  name: {{ include "appguard.fullname" . }}-security-headers
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
 spec:
   headers:
     customFrameOptionsValue: DENY
@@ -22,9 +22,9 @@ spec:
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: {{ include "servasec.fullname" . }}-strip-api-prefix
+  name: {{ include "appguard.fullname" . }}-strip-api-prefix
   labels:
-    {{- include "servasec.labels" . | nindent 4 }}
+    {{- include "appguard.labels" . | nindent 4 }}
 spec:
   stripPrefix:
     prefixes:

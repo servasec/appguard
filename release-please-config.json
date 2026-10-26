@@ -13,12 +13,12 @@
       "extra-files": [
         {
           "type": "yaml",
-          "path": "deploy/helm/servasec/Chart.yaml",
+          "path": "deploy/helm/appguard/Chart.yaml",
           "jsonpath": "$.version"
         },
         {
           "type": "yaml",
-          "path": "deploy/helm/servasec/Chart.yaml",
+          "path": "deploy/helm/appguard/Chart.yaml",
           "jsonpath": "$.appVersion"
         }
       ],

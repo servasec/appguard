@@ -21,12 +21,12 @@ jobs:
           app-id: ${{ secrets.PRO_APP_ID }}
           private-key: ${{ secrets.PRO_APP_PRIVATE_KEY }}
           owner: servasec
-          repositories: servasec-pro
+          repositories: appguard-pro
       - name: Checkout pro module
         if: ${{ env.PRO_APP_ID != '' }}
         uses: actions/checkout@v4
         with:
-          repository: servasec/servasec-pro
+          repository: servasec/appguard-pro
           token: ${{ steps.app-token.outputs.token }}
           path: pro
       - name: Copy pro files
@@ -48,7 +48,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: registry.gitlab.com/servasec/servasec-pro/backend
+          images: registry.gitlab.com/servasec/appguard-pro/backend
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,prefix=,suffix=,format=short

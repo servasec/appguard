@@ -1,8 +1,10 @@
 services:
   frontend:
-    container_name: ${SSC_CONTAINER_PREFIX:-}frontend
+    container_name: ${APPGUARD_CONTAINER_PREFIX:-${SSC_CONTAINER_PREFIX:-}}frontend
     restart: unless-stopped
-    image: registry.gitlab.com/servasec/servasec/frontend:${SSC_IMAGE_TAG:-latest}
+    security_opt:
+      - no-new-privileges:true
+    image: registry.gitlab.com/servasec/appguard/frontend:${APPGUARD_IMAGE_TAG:-${SSC_IMAGE_TAG:-latest}}
     environment:
       - INTERNAL_API_URL=http://backend:8080
       - NODE_ENV=production
@@ -12,26 +14,28 @@ services:
       public:
 
   backend:
-    container_name: ${SSC_CONTAINER_PREFIX:-}backend
+    container_name: ${APPGUARD_CONTAINER_PREFIX:-${SSC_CONTAINER_PREFIX:-}}backend
     restart: unless-stopped
-    image: ${SSC_BACKEND_IMAGE:-registry.gitlab.com/servasec/servasec/backend}:${SSC_IMAGE_TAG:-latest}
+    security_opt:
+      - no-new-privileges:true
+    image: ${APPGUARD_BACKEND_IMAGE:-registry.gitlab.com/servasec/appguard/backend}:${APPGUARD_IMAGE_TAG:-${SSC_IMAGE_TAG:-latest}}
     depends_on:
       db:
         condition: service_healthy
     environment:
       DATABASE_URL: 'postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?sslmode=disable'
-      SSC_SEED_DATABASE: ${SSC_SEED_DATABASE}
+      APPGUARD_SEED_DATABASE: ${APPGUARD_SEED_DATABASE:-${SSC_SEED_DATABASE:-false}}
       JWT_SECRET: ${JWT_SECRET}
       REFRESH_SECRET: ${REFRESH_SECRET}
       CSRF_SECRET: ${CSRF_SECRET}
-      SSC_SITE_NAME: ${SSC_SITE_NAME}
-      SSC_PUBLIC_URL: ${SSC_PUBLIC_URL}
-      SSC_REGISTRATION_ENABLED: ${SSC_REGISTRATION_ENABLED}
-      SSC_DEBUG_ENABLED: ${SSC_DEBUG_ENABLED:-false}
-      SSC_ADMIN_PASSWORD: ${SSC_ADMIN_PASSWORD}
-      SSC_LICENSE_KEY: ${SSC_LICENSE_KEY:-}
-      SSC_API_PREFIX: /api
-      SSC_FEATURES_ENCRYPTION_KEY: ${SSC_FEATURES_ENCRYPTION_KEY}
+      APPGUARD_SITE_NAME: ${APPGUARD_SITE_NAME:-${SSC_SITE_NAME:-appguard}}
+      APPGUARD_PUBLIC_URL: ${APPGUARD_PUBLIC_URL:-${SSC_PUBLIC_URL:-}}
+      APPGUARD_REGISTRATION_ENABLED: ${APPGUARD_REGISTRATION_ENABLED:-${SSC_REGISTRATION_ENABLED:-false}}
+      APPGUARD_DEBUG_ENABLED: ${APPGUARD_DEBUG_ENABLED:-${SSC_DEBUG_ENABLED:-false}}
+      APPGUARD_ADMIN_PASSWORD: ${APPGUARD_ADMIN_PASSWORD:-${SSC_ADMIN_PASSWORD:-}}
+      APPGUARD_LICENSE_KEY: ${APPGUARD_LICENSE_KEY:-${SSC_LICENSE_KEY:-}}
+      APPGUARD_API_PREFIX: /api
+      APPGUARD_FEATURES_ENCRYPTION_KEY: ${APPGUARD_FEATURES_ENCRYPTION_KEY:-${SSC_FEATURES_ENCRYPTION_KEY:-}}
       TRUSTED_PROXIES_CIDR: ${TRUSTED_PROXIES_CIDR:-}
       SSO_GITHUB_CLIENT_ID: ${SSO_GITHUB_CLIENT_ID:-}
       SSO_GITHUB_CLIENT_SECRET: ${SSO_GITHUB_CLIENT_SECRET:-}
@@ -47,8 +51,10 @@ services:
       private:
 
   db:
-    container_name: ${SSC_CONTAINER_PREFIX:-}db
+    container_name: ${APPGUARD_CONTAINER_PREFIX:-${SSC_CONTAINER_PREFIX:-}}db
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
     image: postgres:${POSTGRES_VERSION:-17}
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -65,13 +71,15 @@ services:
       private:
 
   caddy:
-    container_name: ${SSC_CONTAINER_PREFIX:-}caddy
+    container_name: ${APPGUARD_CONTAINER_PREFIX:-${SSC_CONTAINER_PREFIX:-}}caddy
     restart: unless-stopped
-    hostname: servasec.local
-    image: registry.gitlab.com/servasec/servasec/caddy:${SSC_IMAGE_TAG:-latest}
+    security_opt:
+      - no-new-privileges:true
+    hostname: ${APPGUARD_PUBLIC_DOMAIN:-${SSC_PUBLIC_DOMAIN:-appguard.local}}
+    image: registry.gitlab.com/servasec/appguard/caddy:${APPGUARD_IMAGE_TAG:-${SSC_IMAGE_TAG:-latest}}
     environment:
-      - SSC_PUBLIC_DOMAIN=${SSC_PUBLIC_DOMAIN}
-      - SSC_EDGE_MODE=${SSC_EDGE_MODE:-false}
+      - APPGUARD_PUBLIC_DOMAIN=${APPGUARD_PUBLIC_DOMAIN:-${SSC_PUBLIC_DOMAIN:-}}
+      - APPGUARD_EDGE_MODE=${APPGUARD_EDGE_MODE:-${SSC_EDGE_MODE:-false}}
     ports:
       - "${CADDY_HTTP_BIND:-0.0.0.0:80}:80"
       - "${CADDY_HTTPS_BIND:-0.0.0.0:443}:443"
@@ -90,9 +98,9 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: ${SSC_NETWORK_PUBLIC_SUBNET:-172.70.1.0/24}
+        - subnet: ${APPGUARD_NETWORK_PUBLIC_SUBNET:-${SSC_NETWORK_PUBLIC_SUBNET:-172.70.1.0/24}}
   private:
     driver: bridge
     ipam:
       config:
-        - subnet: ${SSC_NETWORK_PRIVATE_SUBNET:-172.70.2.0/24}
+        - subnet: ${APPGUARD_NETWORK_PRIVATE_SUBNET:-${SSC_NETWORK_PRIVATE_SUBNET:-172.70.2.0/24}}

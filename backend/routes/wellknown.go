@@ -8,7 +8,7 @@ import (
 )
 
 func getPublicURL() string {
-	u := os.Getenv("SSC_PUBLIC_URL")
+	u := os.Getenv("APPGUARD_PUBLIC_URL")
 	if u == "" {
 		u = "http://localhost:8080"
 	}
@@ -17,7 +17,7 @@ func getPublicURL() string {
 
 func getMCPResourceURL() string {
 	base := getPublicURL()
-	prefix := os.Getenv("SSC_API_PREFIX")
+	prefix := os.Getenv("APPGUARD_API_PREFIX")
 	return base + prefix + "/mcp"
 }
 

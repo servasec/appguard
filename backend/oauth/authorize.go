@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
+	"github.com/servasec/appguard/backend/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -32,9 +32,9 @@ func generateCode() string {
 
 var loginTmpl = template.Must(template.New("login").Parse(`<!DOCTYPE html>
 <html>
-<head><title>Servasec - Authorize</title></head>
+<head><title>AppGuard - Authorize</title></head>
 <body style="font-family:sans-serif;max-width:400px;margin:40px auto">
-  <h2>Servasec Authorization</h2>
+  <h2>AppGuard Authorization</h2>
   {{if .Error}}<p style="color:red">{{.Error}}</p>{{end}}
   <form method="post" action="{{.Action}}">
     <p><input name="username" placeholder="Username or email" required style="width:100%;padding:8px"></p>

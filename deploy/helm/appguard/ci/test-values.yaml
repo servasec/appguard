@@ -1,4 +1,4 @@
-# values override - local k3d cluster with Traefik
+# CI-only values. Never use these credentials for a real installation.
 
 replicaCount: 1
 
@@ -6,21 +6,21 @@ imagePullSecrets: []
 
 image:
   backend:
-    repository: registry.gitlab.com/servasec/servasec/backend
+    repository: registry.gitlab.com/servasec/appguard/backend
     tag: ""
     pullPolicy: IfNotPresent
   frontend:
-    repository: registry.gitlab.com/servasec/servasec/frontend
+    repository: registry.gitlab.com/servasec/appguard/frontend
     tag: ""
     pullPolicy: IfNotPresent
 
 domain:
-  name: servasec.local
-  publicUrl: "http://servasec.local"
+  name: appguard.test
+  publicUrl: "https://appguard.test"
 
 config:
-  siteName: servasec
-  registrationEnabled: true
+  siteName: appguard
+  registrationEnabled: false
   debugEnabled: false
   apiPrefix: /api
   trustedProxiesCidr: "10.0.0.0/8"
@@ -28,16 +28,16 @@ config:
 ingress:
   traefik:
     enabled: true
-    certResolver: ""
+    certResolver: "letsencrypt"
     tlsSecretName: ""
     entryPoints:
-      - web
+      - websecure
 
 postgresql:
   internal: true
   image: postgres:17
-  database: servasec-db
-  user: servasec
+  database: appguard-db
+  user: appguard
   password: ""
   externalUrl: ""
   resources:
@@ -49,11 +49,12 @@ postgresql:
       memory: 1Gi
 
 secrets:
-  postgresPassword: "aAx3bBTWyWgGFmKL5y4fA6mklBWLOAl/h81rUbtvP90="
-  jwtSecret: "9dnZE4ow5Oi2h/DJI0Nl5a9xwKSIW3/HwLy5FTUkb8Y="
-  refreshSecret: "s92Pl24sLFI9Y+31HDw6LPSbxFdfSAoy5Ajsfr6vMrg="
-  csrfSecret: "AyczvmvHtjHwcQXlkTbHCoJo830gzdBTyNRQzm4fbZ0="
-  adminPassword: "dvpn+OOMZ0ZCSCm6eaINIGq/9uctqKXErounQQKLSTQ="
+  postgresPassword: "test-only-postgres-password-do-not-deploy-0001"
+  jwtSecret: "test-only-jwt-secret-do-not-deploy-000000000001"
+  refreshSecret: "test-only-refresh-secret-do-not-deploy-0000001"
+  csrfSecret: "test-only-csrf-secret-do-not-deploy-000000001"
+  encryptionKey: "test-only-encryption-key-do-not-deploy-00000001"
+  adminPassword: "test-only-admin-password-do-not-deploy-0000001"
   licenseKey: ""
   sso:
     githubClientId: ""
@@ -62,7 +63,7 @@ secrets:
     gitlabClientSecret: ""
     gitlabBaseUrl: ""
     oidcClientId: ""
-    oidcSecret: ""
+    oidcClientSecret: ""
     oidcIssuerUrl: ""
     oidcScopes: "openid profile email"
 
