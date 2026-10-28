@@ -11,7 +11,7 @@ type osvOutput struct {
 }
 
 type osvResult struct {
-	Source   osvSource   `json:"source"`
+	Source   osvSource    `json:"source"`
 	Packages []osvPackage `json:"packages"`
 }
 
@@ -21,7 +21,7 @@ type osvSource struct {
 }
 
 type osvPackage struct {
-	Package        osvPackageInfo    `json:"package"`
+	Package         osvPackageInfo     `json:"package"`
 	Vulnerabilities []osvVulnerability `json:"vulnerabilities"`
 }
 
@@ -32,10 +32,10 @@ type osvPackageInfo struct {
 }
 
 type osvVulnerability struct {
-	ID      string   `json:"id"`
-	Aliases []string `json:"aliases"`
-	Summary string   `json:"summary"`
-	Details string   `json:"details"`
+	ID       string        `json:"id"`
+	Aliases  []string      `json:"aliases"`
+	Summary  string        `json:"summary"`
+	Details  string        `json:"details"`
 	Severity []osvSeverity `json:"severity"`
 }
 

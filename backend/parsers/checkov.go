@@ -17,11 +17,11 @@ type checkovResults struct {
 }
 
 type checkovCheck struct {
-	Check          checkovCheckDef    `json:"check"`
-	CheckID        string             `json:"check_id"`
-	FilePath       string             `json:"file_path"`
-	FileLineRange []int              `json:"file_line_range"`
-	Resource       string             `json:"resource"`
+	Check         checkovCheckDef `json:"check"`
+	CheckID       string          `json:"check_id"`
+	FilePath      string          `json:"file_path"`
+	FileLineRange []int           `json:"file_line_range"`
+	Resource      string          `json:"resource"`
 }
 
 type checkovCheckDef struct {

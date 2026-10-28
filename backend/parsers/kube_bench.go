@@ -11,17 +11,17 @@ type kubeBenchOutput struct {
 }
 
 type kubeBenchControl struct {
-	ID       string           `json:"id"`
-	Text     string           `json:"text"`
-	NodeType string           `json:"node_type"`
-	Version  string           `json:"version"`
-	Tests    []kubeBenchTest  `json:"tests"`
+	ID       string          `json:"id"`
+	Text     string          `json:"text"`
+	NodeType string          `json:"node_type"`
+	Version  string          `json:"version"`
+	Tests    []kubeBenchTest `json:"tests"`
 }
 
 type kubeBenchTest struct {
-	Section  string             `json:"section"`
-	Desc     string             `json:"desc"`
-	Results  []kubeBenchResult  `json:"results"`
+	Section string            `json:"section"`
+	Desc    string            `json:"desc"`
+	Results []kubeBenchResult `json:"results"`
 }
 
 type kubeBenchResult struct {

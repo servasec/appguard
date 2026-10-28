@@ -7,31 +7,31 @@ import (
 )
 
 type trivyResult struct {
-	Target          string          `json:"Target"`
-	Type            string          `json:"Type"`
-	Vulnerabilities []trivyVuln     `json:"Vulnerabilities"`
-	Secrets         []trivySecret   `json:"Secrets"`
+	Target            string           `json:"Target"`
+	Type              string           `json:"Type"`
+	Vulnerabilities   []trivyVuln      `json:"Vulnerabilities"`
+	Secrets           []trivySecret    `json:"Secrets"`
 	Misconfigurations []trivyMisconfig `json:"Misconfigurations"`
 }
 
 type trivyVuln struct {
-	VulnerabilityID   string `json:"VulnerabilityID"`
-	PkgName           string `json:"PkgName"`
-	Severity          string `json:"Severity"`
-	Title             string `json:"Title"`
-	Description       string `json:"Description"`
-	InstalledVersion  string `json:"InstalledVersion"`
-	FixedVersion      string `json:"FixedVersion"`
-	PrimaryURL        string `json:"PrimaryURL"`
+	VulnerabilityID  string `json:"VulnerabilityID"`
+	PkgName          string `json:"PkgName"`
+	Severity         string `json:"Severity"`
+	Title            string `json:"Title"`
+	Description      string `json:"Description"`
+	InstalledVersion string `json:"InstalledVersion"`
+	FixedVersion     string `json:"FixedVersion"`
+	PrimaryURL       string `json:"PrimaryURL"`
 }
 
 type trivySecret struct {
-	RuleID    string   `json:"RuleID"`
-	Title     string   `json:"Title"`
-	Severity  string   `json:"Severity"`
-	Match     string   `json:"Match"`
-	Target    string   `json:"Target"`
-	Code      trivyCode `json:"Code"`
+	RuleID   string    `json:"RuleID"`
+	Title    string    `json:"Title"`
+	Severity string    `json:"Severity"`
+	Match    string    `json:"Match"`
+	Target   string    `json:"Target"`
+	Code     trivyCode `json:"Code"`
 }
 
 type trivyCode struct {
@@ -43,11 +43,11 @@ type trivyLine struct {
 }
 
 type trivyMisconfig struct {
-	ID       string   `json:"ID"`
-	Title    string   `json:"Title"`
-	Severity string   `json:"Severity"`
-	Message  string   `json:"Message"`
-	Type     string   `json:"Type"`
+	ID            string             `json:"ID"`
+	Title         string             `json:"Title"`
+	Severity      string             `json:"Severity"`
+	Message       string             `json:"Message"`
+	Type          string             `json:"Type"`
 	CauseMetadata trivyCauseMetadata `json:"CauseMetadata"`
 }
 
@@ -154,13 +154,13 @@ func ParseTrivy(data []byte, filename string) ([]FindingInput, error) {
 			}
 
 			findings = append(findings, FindingInput{
-				RuleID:    m.ID,
-				Title:     title,
-				Severity:  severity,
+				RuleID:      m.ID,
+				Title:       title,
+				Severity:    severity,
 				Description: m.Message,
-				FilePath:  r.Target,
-				LineStart: lineStart,
-				LineEnd:   lineEnd,
+				FilePath:    r.Target,
+				LineStart:   lineStart,
+				LineEnd:     lineEnd,
 			})
 		}
 	}

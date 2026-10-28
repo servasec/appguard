@@ -13,6 +13,8 @@ RUN apk add --no-cache \
     && true
 
 # Install Go from official tarball (Alpine 3.19 ships 1.21, we need 1.22+)
+# NOTE: if `go install ...@latest` below fails on a go.mod go directive,
+# bump this to the latest release from https://go.dev/dl
 RUN curl -sSL https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | tar -C /usr/local -xz
 ENV PATH="/usr/local/go/bin:/root/go/bin:${PATH}"
 
@@ -34,9 +36,9 @@ RUN go install github.com/securego/gosec/v2/cmd/gosec@latest
 # --- checkov (IaC scanner) ---
 RUN pip3 install --break-system-packages checkov
 
-    # --- tfsec (Terraform scanner) ---
-    # Download directly - Alpine's BusyBox sha256sum doesn't support -q flag
-    # used by the official install script
+# --- tfsec (Terraform scanner) ---
+# Download directly - Alpine's BusyBox sha256sum doesn't support -q flag
+# used by the official install script
 RUN curl -sSL -o /usr/local/bin/tfsec \
         https://github.com/aquasecurity/tfsec/releases/latest/download/tfsec-linux-amd64 \
     && chmod +x /usr/local/bin/tfsec
@@ -47,11 +49,154 @@ RUN pip3 install --break-system-packages semgrep
 # --- gitleaks (secret scanner) ---
 RUN go install github.com/zricethezav/gitleaks/v8@latest
 
+# --- trufflehog (secret scanner) ---
+# Not `go install`: latest go.mod ships `replace` directives, which `go install
+# pkg@version` refuses ("must not contain directives that would cause it to be
+# interpreted differently than if it were the main module"). Official script
+# installs the prebuilt release binary instead.
+RUN curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+
+# --- snyk (dependency scanner CLI) ---
+RUN npm install -g snyk
+
 # --- nuclei (DAST scanner) ---
 RUN go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@latest
 
 # --- nuclei templates ---
 RUN nuclei -update-templates 2>/dev/null || true
+
+# ===========================================================================
+# New tools for the expanded scanner set (Phase 1-3: 50 scanners)
+# ===========================================================================
+
+# --- pip-audit (Python dependency scanner) ---
+RUN pip3 install --break-system-packages pip-audit
+
+# --- flawfinder (C/C++ static analysis) ---
+RUN pip3 install --break-system-packages flawfinder
+
+# --- detect-secrets (secret scanner, Yelp) ---
+RUN pip3 install --break-system-packages detect-secrets
+
+# --- njsscan (Node.js SAST) ---
+RUN pip3 install --break-system-packages njsscan
+
+# --- sslyze (TLS config scanner) ---
+RUN pip3 install --break-system-packages sslyze
+
+# --- dirsearch (web path scanner) ---
+RUN pip3 install --break-system-packages dirsearch
+
+# --- Go-site tools: govulncheck, kubeaudit, popeye, kics, kubescape,
+#     kube-linter, terrascan, horusec, kube-bench, naabu, httpx, ffuf ---
+# Build notes (verified against @latest as of 2026-09):
+#   - trufflehog/govulncheck/popeye/kube-linter/naabu/httpx/ffuf/nuclei:
+#     `go install pkg@latest` OK (auto toolchain switch handles newer `go`
+#     directives).
+#   - kubeaudit: CLI main moved to module root ./cmd (./cmd/kubeaudit gone).
+#   - kics: CLI main moved to ./cmd/console; v2.1.21 requires go >= 1.26.
+#   - kubescape: root main.go, but go.mod carries `replace` directives →
+#     `go install pkg@version` refuses them; must build from a clone. Their
+#     canonical static build uses CGO_ENABLED=0 (no libgit2/git2go needed —
+#     the `gitenabled,static` Makefile path is only for the libgit2 variant).
+#   - terrascan v1.19.9: `replace` directives in go.mod → clone + build
+#     (sqlite via modernc.org — pure Go, no cgo).
+#   - horusec: CLI main is under horusec-cli/cmd/horusec, not ./cmd/horusec.
+#   - kube-bench: main moved to module root (./cmd/kube-bench gone).
+# kubeaudit/kics/kubescape/terrascan are therefore built from pinned git
+# clones (tolerates `replace` directives and explicit `-o` output name).
+RUN go install golang.org/x/vuln/cmd/govulncheck@latest \
+ && git clone -q --depth 1 --branch v0.22.2 https://github.com/Shopify/kubeaudit /opt/kubeaudit \
+ && cd /opt/kubeaudit && go build -o /usr/local/bin/kubeaudit ./cmd \
+ && git clone -q --depth 1 --branch v2.1.21 https://github.com/Checkmarx/kics /opt/kics \
+ && cd /opt/kics && go build -o /usr/local/bin/kics ./cmd/console \
+ && git clone -q --depth 1 --branch v2.9.2 https://github.com/kubescape/kubescape /opt/kubescape \
+ && cd /opt/kubescape && CGO_ENABLED=0 go build -o /usr/local/bin/kubescape . \
+ && git clone -q --depth 1 --branch v1.19.9 https://github.com/tenable/terrascan /opt/terrascan \
+ && cd /opt/terrascan && go build -o /usr/local/bin/terrascan ./cmd/terrascan \
+ && go install github.com/derailed/popeye@latest \
+ && go install golang.stackrox.io/kube-linter/cmd/kube-linter@latest \
+ && go install github.com/ZupIT/horusec/horusec-cli/cmd/horusec@latest \
+ && go install github.com/aquasecurity/kube-bench@latest
+
+# --- Web fuzzing/recon (projectdiscovery family + ffuf) ---
+RUN go install github.com/projectdiscovery/naabu/v2/cmd/naabu@latest \
+ && go install github.com/projectdiscovery/httpx/cmd/httpx@latest \
+ && go install github.com/ffuf/ffuf/v2@latest
+
+# --- Node ecosystem: yarn v1, pnpm@10, secretlint@12 ---
+# Alpine 3.19 ships Node 20, so pin versions whose `engines` accept it:
+#   pnpm@10          -> >=18.12 (pnpm 11+ requires Node >= 22.13)
+#   secretlint@12    -> >=20.0.0 (secretlint 13+ requires Node >= 22)
+#   rule-{github,slack}@11 -> >=20.0.0
+# Do NOT re-add: @secretlint/secretlint-rule-no-hardcoded-password and
+# @secretlint/secretlint-formatter-json do not exist on npm (E404), and
+# @secretlint/secretlint-rule-preset-recommend is not standalone-installable
+# (its rules are only devDependencies of the package, not runtime deps).
+RUN apk add --no-cache yarn \
+ && npm install -g pnpm@10 \
+ && npm install -g secretlint@12 \
+        @secretlint/secretlint-rule-github@11 \
+        @secretlint/secretlint-rule-slack@11
+
+# --- C++ static analysis ---
+RUN apk add --no-cache cppcheck
+
+# --- Java static analysis (PMD 7) ---
+# PMD release assets are named pmd-dist-<ver>-bin.zip under tag pmd_releases/<ver>
+# (there is no pmd-bin-latest.zip asset). Resolve the latest tag via the GitHub
+# API (jq is installed above) instead of hardcoding a version.
+RUN apk add --no-cache openjdk17 unzip \
+ && PMD_VERSION=$(curl -s https://api.github.com/repos/pmd/pmd/releases/latest \
+        | jq -r '.tag_name' | sed 's#pmd_releases/##') \
+ && curl -sSL -o /tmp/pmd.zip \
+        https://github.com/pmd/pmd/releases/download/pmd_releases/${PMD_VERSION}/pmd-dist-${PMD_VERSION}-bin.zip \
+ && unzip -q /tmp/pmd.zip -d /opt \
+ && ln -s /opt/pmd-bin-${PMD_VERSION}/bin/pmd /usr/local/bin/pmd \
+ && rm -f /tmp/pmd.zip
+
+# --- PHP dependency auditing (composer) ---
+# php82 provides cmd:php (see community APKINDEX: "p:... cmd:php=8.2.26-r0"),
+# so /usr/bin/php is already installed — do NOT ln -s it (fails "File exists").
+RUN apk add --no-cache php82 php82-phar php82-openssl php82-mbstring php82-curl \
+ && curl -sSL https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# --- Rust dependency auditing (cargo-audit; slow to build) ---
+# Alpine 3.19 ships rustc 1.76. cargo-audit 0.22.x needs rustc >= 1.85-1.88 and
+# 0.21.2 needs >= 1.81, so pin 0.21.1 (MSRV 1.74, confirmed by cargo's own
+# suggestion on failure and crates.io rust_version metadata).
+RUN apk add --no-cache rust cargo \
+ && cargo install cargo-audit@0.21.1 --locked
+
+# --- testssl.sh (TLS scanner, git checkout) ---
+RUN git clone --depth 1 https://github.com/drwetter/testssl.sh /opt/testssl.sh \
+ && chmod +x /opt/testssl.sh/testssl.sh \
+ && ln -s /opt/testssl.sh/testssl.sh /usr/local/bin/testssl
+
+# --- nikto (web server scanner, git checkout) ---
+RUN git clone --depth 1 https://github.com/sullo/nikto /opt/nikto \
+ && chmod +x /opt/nikto/program/nikto.pl \
+ && ln -s /opt/nikto/program/nikto.pl /usr/local/bin/nikto
+
+# --- nmap (network scanner) ---
+RUN apk add --no-cache nmap nmap-scripts nmap-ncat
+
+# ---------------------------------------------------------------------------
+# Best-effort tools (not installed by default - see notes)
+#   - noseyparker (Rust, GitHub-release only): download the matching
+#     noseyparker-v<VER>-x86_64-unknown-linux-gnu.tar.gz release and place the
+#     binary in /usr/local/bin. scan.sh falls back to a placeholder JSON.
+#   - wpscan / cfn-nag (Ruby gems): need ruby + native build deps; heavy.
+#     Install manually with: apk add ruby ruby-dev build-base && gem install wpscan / cfn-nag
+#   - prowler / scoutsuite: python packages (prowler needs an AWS session).
+#     prowler: pip3 install --break-system-packages prowler
+#     scoutsuite: pip3 install --break-system-packages scoutsuite
+#   - docker-bench-security (CIS): shell script that inspects a running
+#     docker daemon; no-op inside this image unless /var/run/docker.sock is
+#     mounted. Clone https://github.com/docker/docker-bench-security if needed.
+#   - osv-scanner/grype/trivy/gosec/semgrep/checkov/tfsec/bandit/gitleaks/nuclei
+#     are installed above.
+# ---------------------------------------------------------------------------
 
 COPY scan.sh /scan.sh
 RUN chmod +x /scan.sh

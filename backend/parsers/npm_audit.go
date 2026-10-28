@@ -11,11 +11,11 @@ type npmAuditOutput struct {
 }
 
 type npmAuditVuln struct {
-	Name         string              `json:"name"`
-	Severity     string              `json:"severity"`
-	Range         string             `json:"range"`
-	Via          []npmAuditVia       `json:"via"`
-	FixAvailable  interface{}        `json:"fixAvailable"`
+	Name         string        `json:"name"`
+	Severity     string        `json:"severity"`
+	Range        string        `json:"range"`
+	Via          []npmAuditVia `json:"via"`
+	FixAvailable interface{}   `json:"fixAvailable"`
 }
 
 type npmAuditVia interface{}

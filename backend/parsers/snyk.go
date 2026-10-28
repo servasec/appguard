@@ -12,16 +12,16 @@ type snykOutput struct {
 }
 
 type snykVulnerability struct {
-	ID               string           `json:"id"`
-	Title            string           `json:"title"`
-	Severity         string           `json:"severity"`
-	Description      string           `json:"description"`
-	PackageName      string           `json:"packageName"`
-	Version          string           `json:"version"`
-	Identifiers      snykIdentifiers  `json:"identifiers"`
-	UpgradePath      []string         `json:"upgradePath"`
-	IsUpgradable     bool             `json:"isUpgradable"`
-	SemVer           snykSemVer       `json:"semver"`
+	ID           string          `json:"id"`
+	Title        string          `json:"title"`
+	Severity     string          `json:"severity"`
+	Description  string          `json:"description"`
+	PackageName  string          `json:"packageName"`
+	Version      string          `json:"version"`
+	Identifiers  snykIdentifiers `json:"identifiers"`
+	UpgradePath  []string        `json:"upgradePath"`
+	IsUpgradable bool            `json:"isUpgradable"`
+	SemVer       snykSemVer      `json:"semver"`
 }
 
 type snykIdentifiers struct {

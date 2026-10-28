@@ -16,10 +16,10 @@ type grypeMatch struct {
 }
 
 type grypeVulnerability struct {
-	ID          string       `json:"id"`
-	Severity    string       `json:"severity"`
-	Description string       `json:"description"`
-	Fix         *grypeFix    `json:"fix"`
+	ID          string    `json:"id"`
+	Severity    string    `json:"severity"`
+	Description string    `json:"description"`
+	Fix         *grypeFix `json:"fix"`
 }
 
 type grypeFix struct {

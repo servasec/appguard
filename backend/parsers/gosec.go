@@ -13,14 +13,14 @@ type gosecOutput struct {
 }
 
 type gosecIssue struct {
-	RuleID     string      `json:"rule_id"`
-	Details    string      `json:"details"`
-	Severity   string      `json:"severity"`
-	Confidence string      `json:"confidence"`
-	File       string      `json:"file"`
-	Line       string      `json:"line"`
-	Code       string      `json:"code"`
-	Cwe        *gosecCwe   `json:"cwe"`
+	RuleID     string    `json:"rule_id"`
+	Details    string    `json:"details"`
+	Severity   string    `json:"severity"`
+	Confidence string    `json:"confidence"`
+	File       string    `json:"file"`
+	Line       string    `json:"line"`
+	Code       string    `json:"code"`
+	Cwe        *gosecCwe `json:"cwe"`
 }
 
 type gosecCwe struct {
