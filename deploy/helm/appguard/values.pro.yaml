@@ -1,0 +1,9 @@
+image:
+  backend:
+    repository: registry.gitlab.com/servasec/appguard-pro/backend
+    tag: ""
+    pullPolicy: Always
+
+secrets:
+  licenseKey: "ssc_xxxxx"
+  licensePublicKey: ""

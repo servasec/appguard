@@ -1,5 +1,5 @@
 {
-  "name": "servasec-frontend",
+  "name": "appguard-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -22,13 +22,13 @@
     "@radix-ui/react-tabs": "^1.1.19",
     "@radix-ui/react-toggle": "^1.1.16",
     "@radix-ui/react-tooltip": "^1.2.14",
-    "axios": "^1.13.0",
+    "axios": "^1.20.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "lucide-react": "^0.525.0",
     "motion": "^12.42.0",
-    "next": "^16.3.0",
+    "next": "^16.3.3",
     "next-themes": "^0.4.6",
     "playwright": "^1.61.1",
     "react": "^18.2.0",

@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { quotaErrorMessage } from "@/lib/utils";
 import { CheckCircle } from "lucide-react";
 import { AuthLayout } from "@/components/auth-layout";
+import { Brand } from "@/components/brand";
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -56,16 +57,12 @@ const RegisterPage = () => {
 
   return (
     <AuthLayout>
-      <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
+      <div className="rounded-md border border-border/60 bg-card text-card-foreground">
         <div className="p-8">
           <form onSubmit={handleRegister}>
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center gap-3 text-center">
-                <img
-                  src="/assets/servasec-mark.svg"
-                  alt="servasec"
-                  className="w-10 h-10"
-                />
+                <Brand className="justify-center" />
                 <div>
                   <p className="text-sm text-muted-foreground mt-0.5">
                     Create your account

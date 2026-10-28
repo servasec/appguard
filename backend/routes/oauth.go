@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/middleware"
-	"github.com/servasec/servasec/backend/oauth"
+	"github.com/servasec/appguard/backend/middleware"
+	"github.com/servasec/appguard/backend/oauth"
 )
 
 func RegisterOAuthRoutes(router *gin.Engine) {

@@ -497,10 +497,10 @@ definitions:
 host: localhost:8080
 info:
   contact:
-    email: support@servasec.local
+    email: support@appguard.servasec.local
     name: API Support
   description: Security scanner management platform API
-  title: Servasec API
+  title: AppGuard API
   version: "1.0"
 paths:
   /admin/permissions:

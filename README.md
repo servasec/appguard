@@ -1,15 +1,15 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="frontend/public/assets/servasec-mark.svg">
-    <img src="frontend/public/assets/servasec-mark.svg" alt="servasec open source ASPM" width="100" height="100">
+    <source media="(prefers-color-scheme: dark)" srcset="frontend/public/assets/appguard-mark.svg">
+    <img src="frontend/public/assets/appguard-mark.svg" alt="AppGuard open source ASPM" width="100" height="100">
   </picture>
 </p>
 
-<h1 align="center">servasec - Open Source ASPM</h1>
+<h1 align="center">AppGuard - Open Source ASPM</h1>
 
 <p align="center">
-<picture><source media="(prefers-color-scheme: dark)" srcset="https://www.shieldcn.dev/github/stars/servasec/servasec.svg?variant=secondary&amp;size=sm&amp;mode=dark"><img alt="GitHub Stars" src="https://www.shieldcn.dev/github/stars/servasec/servasec.svg?variant=secondary&amp;size=sm&amp;mode=light"></picture>
-<a style="text-decoration:none" href="https://github.com/servasec/servasec/releases" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://www.shieldcn.dev/github/release/servasec/servasec.svg?size=sm&amp;mode=dark"><img alt="Release" src="https://www.shieldcn.dev/github/release/servasec/servasec.svg?size=sm&amp;mode=light"></picture></a>
+<picture><source media="(prefers-color-scheme: dark)" srcset="https://www.shieldcn.dev/github/stars/servasec/appguard.svg?variant=secondary&amp;size=sm&amp;mode=dark"><img alt="GitHub Stars" src="https://www.shieldcn.dev/github/stars/servasec/appguard.svg?variant=secondary&amp;size=sm&amp;mode=light"></picture>
+<a style="text-decoration:none" href="https://github.com/servasec/appguard/releases" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://www.shieldcn.dev/github/release/servasec/appguard.svg?size=sm&amp;mode=dark"><img alt="Release" src="https://www.shieldcn.dev/github/release/servasec/appguard.svg?size=sm&amp;mode=light"></picture></a>
 <a href="https://discord.com/invite/wJZ2v5YNtD" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/discord/members/wJZ2v5YNtD.svg?variant=secondary&amp;mode=dark"><img alt="badge" src="https://shieldcn.dev/discord/members/wJZ2v5YNtD.svg?variant=secondary&amp;mode=light"></picture></a>
 <a href="https://docs.servasec.com" target="_blank"><picture><source media="(prefers-color-scheme: dark)" srcset="https://shieldcn.dev/badge/docs.servasec.com.svg?variant=ghost&color=6f4599"><img alt="badge" src="https://shieldcn.dev/badge/docs.servasec.com.svg?variant=ghost&color=6f4599"></picture></a>
 </p>
@@ -52,21 +52,25 @@ curl -fsSL https://servasec.com/install.sh | sh -s -- --local-build
 **Install with pro features**:
 
 ```bash
-# Pull mode: uses the private backend-pro image from the servasec-pro project (authenticate first)
+# Pull mode: uses the private backend-pro image from the appguard-pro project (authenticate first)
 docker login registry.gitlab.com -u $CUSTOMER_UUID -p $CUSTOMER_TOKEN
 curl -fsSL https://servasec.com/install.sh | sh -s -- --pro
 ```
 
-Pro features are available with a valid subscription of servasec.  
+Pro features are available with a valid AppGuard subscription.
 Please refer to [servasec.com/pricing](https://servasec.com/pricing) to obtain one.
 
 **Manual setup** (without the install script):
 
 ```bash
-git clone https://github.com/servasec/servasec.git
-cd servasec
+git clone https://github.com/servasec/appguard.git
+cd appguard
 cp .env.example .env
-# Edit secrets (JWT_SECRET, REFRESH_SECRET, CSRF_SECRET, SSC_ADMIN_PASSWORD)
+# Set APPGUARD_PUBLIC_DOMAIN and APPGUARD_PUBLIC_URL to your real HTTPS domain.
+# Generate a unique value for POSTGRES_PASSWORD and each *_SECRET / encryption key:
+openssl rand -base64 32
+# Set APPGUARD_ADMIN_PASSWORD to a unique password. Registration stays disabled by default.
+# Keep APPGUARD_IMAGE_TAG pinned to the release you intend to deploy.
 
 # Pull the published images from registry.gitlab.com
 make community
@@ -75,27 +79,37 @@ make community
 make community-build
 ```
 
+The example environment is intentionally non-deployable until its `REPLACE_WITH_...` values
+are replaced. Do not expose the instance while any example value remains.
+
+See [backup and restore guidance](docs/operations/backup-and-restore.md) before upgrading a
+production instance.
+
+AppGuard teams and groups are access scopes inside one deployment, not customer tenant boundaries.
+For isolation requirements, see the [deployment boundary guidance](docs/architecture/deployment-boundaries.md).
+
 ## Scanner support
 
-Look at https://docs.servasec.com/scanners/overview/ for the complete list of scanners supported.
+Look at https://docs.servasec.com/docs/appguard/integrations/scanners for scanner integration guidance.
 
 ## Frequently Asked Questions
 
-### Is servasec free and open source?
+### Is appguard free and open source?
 
-Yes, servasec is licensed under AGPLv3. Self-host it for free, forever. A separate commercial license is required only for Pro features (audit log, MCP Server, SSO, etc).
+Yes, AppGuard is licensed under AGPLv3. Self-host it for free, forever. A separate commercial license is required only for Pro features (audit log, MCP Server, SSO, etc).
 
-### Which scanners does servasec support?
+### Which scanners does appguard support?
 
-servasec ingests Semgrep, Trivy, Gitleaks, OSV-Scanner, tfsec, SARIF exports and a lot more ! See [supported scanners](https://servasec.com/scanners) for details.
+AppGuard ingests Semgrep, Trivy, Gitleaks, OSV-Scanner, tfsec, SARIF exports and more. See [supported scanners](https://servasec.com/appguard/scanners) for details.
 
 ## Environment Variables
 
-See https://docs.servasec.com/getting-started/configuration/
+See https://docs.servasec.com/docs/appguard/api for the API reference and
+https://docs.servasec.com/docs/appguard/getting-started/configuration for configuration guidance.
 
 ## License
 
-**servasec** is dual-licensed:
+**appguard** is dual-licensed:
 
 - **AGPLv3** - Free, open-source. All standard features included.
 - **Commercial License** - Required for pro features (audit log, MCP, SLA management, advanced reporting).

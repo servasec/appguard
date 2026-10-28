@@ -5,6 +5,8 @@ FROM golang:1.25-alpine AS go_builder
 
 ARG BUILD_TAGS=""
 ARG GIT_VERSION="develop"
+ARG TARGETOS=linux
+ARG TARGETARCH=amd64
 
 WORKDIR /app
 
@@ -12,7 +14,7 @@ COPY go.mod go.sum ./
 COPY . .
 RUN go mod download
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -tags "${BUILD_TAGS}" -ldflags "-X github.com/servasec/servasec/backend/version.Version=${GIT_VERSION}" -o servasec
+RUN CGO_ENABLED=0 GOOS=${TARGETOS} GOARCH=${TARGETARCH} go build -tags "${BUILD_TAGS}" -ldflags "-X github.com/servasec/appguard/backend/version.Version=${GIT_VERSION}" -o appguard
 
 # ============================================
 # Dev stage
@@ -63,7 +65,7 @@ RUN adduser -D -u 1000 -s /sbin/nologin app && \
 
 USER app
 
-COPY --from=go_builder /app/servasec /app/servasec
+COPY --from=go_builder /app/appguard /app/appguard
 COPY config/casbin_model.conf /app/config/
 COPY config/casbin_policies.csv /app/config/
 COPY entrypoint.prod.sh /entrypoint.sh

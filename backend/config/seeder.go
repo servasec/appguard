@@ -7,8 +7,8 @@ import (
 	"os"
 
 	"github.com/casbin/casbin/v2"
-	"github.com/servasec/servasec/backend/debug"
-	"github.com/servasec/servasec/backend/models"
+	"github.com/servasec/appguard/backend/debug"
+	"github.com/servasec/appguard/backend/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -22,11 +22,11 @@ func generateRandomHex(n int) (string, error) {
 }
 
 func getAdminPassword() string {
-	if pwd := os.Getenv("SSC_ADMIN_PASSWORD"); pwd != "" {
+	if pwd := os.Getenv("APPGUARD_ADMIN_PASSWORD"); pwd != "" {
 		return pwd
 	}
-	if os.Getenv("SSC_DEBUG_ENABLED") != "true" {
-		log.Fatal("SSC_ADMIN_PASSWORD must be set in production")
+	if os.Getenv("APPGUARD_DEBUG_ENABLED") != "true" {
+		log.Fatal("APPGUARD_ADMIN_PASSWORD must be set in production")
 	}
 	randomPwd, err := generateRandomHex(16)
 	if err != nil {
@@ -35,7 +35,7 @@ func getAdminPassword() string {
 
 	log.Printf("========================================")
 	log.Printf("  ADMIN PASSWORD: %s", randomPwd)
-	log.Printf("  Set SSC_ADMIN_PASSWORD env var to disable random generation")
+	log.Printf("  Set APPGUARD_ADMIN_PASSWORD env var to disable random generation")
 	log.Printf("========================================")
 	return randomPwd
 }
@@ -44,7 +44,7 @@ func seedDefaultUsers() {
 	adminPassword := getAdminPassword()
 
 	users := []models.User{
-		{Username: "admin", Email: "admin@servasec.local", Password: adminPassword, Role: "admin"},
+		{Username: "admin", Email: "admin@appguard.servasec.local", Password: adminPassword, Role: "admin"},
 	}
 
 	for _, user := range users {

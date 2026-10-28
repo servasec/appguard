@@ -4,8 +4,8 @@ COMPOSE_DEV  := USER_UID=$(shell id -u) USER_GID=$(shell id -g) GIT_VERSION=$(sh
 COMPOSE_PROD := GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.prod.yml
 COMPOSE_BUILD := GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.prod.yml -f docker-compose.build.yml
 
-SSC_PUBLIC_DOMAIN  ?= servasec.local
-PRO_REPO_DIR       ?= ../servasec-pro
+APPGUARD_PUBLIC_DOMAIN  ?= appguard.servasec.local
+PRO_REPO_DIR       ?= ../appguard-pro
 
 dev: ## Start dev stack
 	$(COMPOSE_DEV) up --build -d
@@ -24,16 +24,20 @@ community: ## Pull and start community prod images (registry.gitlab.com)
 community-build: ## Build and start community prod stack from source
 	$(COMPOSE_BUILD) up --build -d
 
-pro: ## Pull and start pro prod stack (requires docker login for the private servasec-pro project)
-	SSC_BACKEND_IMAGE=registry.gitlab.com/servasec/servasec-pro/backend $(COMPOSE_PROD) up -d
+pro: ## Pull and start pro prod stack (requires docker login for the private appguard-pro project)
+	APPGUARD_BACKEND_IMAGE=registry.gitlab.com/servasec/appguard-pro/backend $(COMPOSE_PROD) up -d
 
-pro-build: ## Build and start pro prod stack (requires servasec-pro repo)
-	cp $(PRO_REPO_DIR)/backend/pro/*.go backend/pro/
-	BUILD_TAGS=pro $(COMPOSE_BUILD) up --build -d
+pro-build: ## Build and start pro prod stack (requires appguard-pro repo)
+	@mkdir -p .build/appguard-pro-backend; \
+	cp -a backend/. .build/appguard-pro-backend/; \
+	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go .build/appguard-pro-backend/pro/; \
+	APPGUARD_BACKEND_CONTEXT=.build/appguard-pro-backend BUILD_TAGS=pro $(COMPOSE_BUILD) up --build -d
 
-dev-pro: ## Start dev stack with pro features (requires servasec-pro repo)
-	cp $(PRO_REPO_DIR)/backend/pro/*.go backend/pro/
-	BUILD_TAGS=pro $(COMPOSE_DEV) up --build -d
+dev-pro: ## Start dev stack with pro features (requires appguard-pro repo)
+	@mkdir -p .build/appguard-pro-backend; \
+	cp -a backend/. .build/appguard-pro-backend/; \
+	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go .build/appguard-pro-backend/pro/; \
+	APPGUARD_BACKEND_CONTEXT=.build/appguard-pro-backend BUILD_TAGS=pro $(COMPOSE_DEV) up --build -d
 
 down-prod: ## Stop prod stack
 	$(COMPOSE_PROD) down

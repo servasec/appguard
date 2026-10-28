@@ -51,7 +51,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        <link rel="icon" href="/assets/servasec-favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="/assets/appguard-favicon.svg" type="image/svg+xml" />
       </Head>
       <AuthProvider>
         <CSRFProvider>
@@ -59,7 +59,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
-            storageKey="servasec-theme"
+            storageKey="appguard-theme"
             themes={["light", "dark", "catppuccin", "github", "nord"]}
           >
             <AppLayout>

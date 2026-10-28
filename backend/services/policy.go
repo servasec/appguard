@@ -17,8 +17,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
 )
 
 const maxRecursionDepth = 3
@@ -349,13 +349,13 @@ func doSendWebhook(url, secret string, body []byte) error {
 		return err
 	}
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-Servasec-Event", "policy.evaluation")
+	req.Header.Set("X-AppGuard-Event", "policy.evaluation")
 
 	if secret != "" {
 		mac := hmac.New(sha256.New, []byte(secret))
 		mac.Write(body)
 		sig := hex.EncodeToString(mac.Sum(nil))
-		req.Header.Set("X-Servasec-Signature", sig)
+		req.Header.Set("X-AppGuard-Signature", sig)
 	}
 
 	resp, err := sharedHTTPClient.Do(req)

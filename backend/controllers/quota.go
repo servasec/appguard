@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/services"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/services"
+	"github.com/servasec/appguard/backend/utils"
 )
 
 // GetQuotas returns the current license quota limits and usage.

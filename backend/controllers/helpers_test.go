@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/middleware"
-	"github.com/servasec/servasec/backend/testutil"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/middleware"
+	"github.com/servasec/appguard/backend/testutil"
+	"github.com/servasec/appguard/backend/utils"
 )
 
 func TestMain(m *testing.M) {

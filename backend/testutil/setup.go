@@ -8,8 +8,8 @@ import (
 	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/gin-gonic/gin"
 	"github.com/glebarez/sqlite"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )

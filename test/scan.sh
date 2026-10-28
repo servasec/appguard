@@ -8,7 +8,7 @@ TARGET_HOST="${SCAN_TARGET_HOST:-}"
 
 mkdir -p "$REPORTS_DIR"
 
-echo "=== servasec scanner fixture generator ==="
+echo "=== appguard scanner fixture generator ==="
 echo ""
 
 # --- Container scanners ---
