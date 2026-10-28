@@ -75,7 +75,7 @@ services:
     restart: unless-stopped
     security_opt:
       - no-new-privileges:true
-    hostname: ${APPGUARD_PUBLIC_DOMAIN:-${SSC_PUBLIC_DOMAIN:-appguard.local}}
+    hostname: ${APPGUARD_PUBLIC_DOMAIN:-${SSC_PUBLIC_DOMAIN:-appguard.servasec.local}}
     image: registry.gitlab.com/servasec/appguard/caddy:${APPGUARD_IMAGE_TAG:-${SSC_IMAGE_TAG:-latest}}
     environment:
       - APPGUARD_PUBLIC_DOMAIN=${APPGUARD_PUBLIC_DOMAIN:-${SSC_PUBLIC_DOMAIN:-}}

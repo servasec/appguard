@@ -4,7 +4,7 @@ COMPOSE_DEV  := USER_UID=$(shell id -u) USER_GID=$(shell id -g) GIT_VERSION=$(sh
 COMPOSE_PROD := GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.prod.yml
 COMPOSE_BUILD := GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.prod.yml -f docker-compose.build.yml
 
-APPGUARD_PUBLIC_DOMAIN  ?= appguard.local
+APPGUARD_PUBLIC_DOMAIN  ?= appguard.servasec.local
 PRO_REPO_DIR       ?= ../appguard-pro
 
 dev: ## Start dev stack

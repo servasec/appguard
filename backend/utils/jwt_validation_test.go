@@ -24,8 +24,8 @@ func TestValidateSecrets(t *testing.T) {
 	}
 	development["APPGUARD_DEBUG_ENABLED"] = "true"
 	development["APPGUARD_ADMIN_PASSWORD"] = ""
-	development["APPGUARD_PUBLIC_URL"] = "http://appguard.local"
-	development["APPGUARD_PUBLIC_DOMAIN"] = "appguard.local"
+	development["APPGUARD_PUBLIC_URL"] = "http://appguard.servasec.local"
+	development["APPGUARD_PUBLIC_DOMAIN"] = "appguard.servasec.local"
 	if err := validateSecrets(get(development)); err != nil {
 		t.Fatalf("development settings rejected: %v", err)
 	}

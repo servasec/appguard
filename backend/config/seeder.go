@@ -44,7 +44,7 @@ func seedDefaultUsers() {
 	adminPassword := getAdminPassword()
 
 	users := []models.User{
-		{Username: "admin", Email: "admin@appguard.local", Password: adminPassword, Role: "admin"},
+		{Username: "admin", Email: "admin@appguard.servasec.local", Password: adminPassword, Role: "admin"},
 	}
 
 	for _, user := range users {

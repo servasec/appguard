@@ -11,7 +11,7 @@ const docTemplate = `{
         "title": "{{.Title}}",
         "contact": {
             "name": "API Support",
-            "email": "support@appguard.local"
+            "email": "support@appguard.servasec.local"
         },
         "version": "{{.Version}}"
     },

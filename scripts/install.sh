@@ -122,7 +122,7 @@ APPGUARD_COMPOSE_BUILD="docker compose -f $COMPOSE_FILE -f $COMPOSE_BUILD_FILE"
 APPGUARD_ENV_FILE=".env"
 APPGUARD_EXAMPLE=".env.example"
 
-DEFAULT_DOMAIN="appguard.local"
+DEFAULT_DOMAIN="appguard.servasec.local"
 DEFAULT_PRO_REPO="../appguard-pro"
 
 # ──────────────────────────────────────────────

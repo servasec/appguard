@@ -42,6 +42,7 @@ services:
       CSRF_SECRET: ${CSRF_SECRET}
       APPGUARD_SITE_NAME: ${APPGUARD_SITE_NAME}
       APPGUARD_PUBLIC_URL: ${APPGUARD_PUBLIC_URL}
+      APPGUARD_PUBLIC_DOMAIN: ${APPGUARD_PUBLIC_DOMAIN}
       APPGUARD_REGISTRATION_ENABLED: ${APPGUARD_REGISTRATION_ENABLED}
       APPGUARD_DEBUG_ENABLED: ${APPGUARD_DEBUG_ENABLED:-false}
       APPGUARD_ADMIN_PASSWORD: ${APPGUARD_ADMIN_PASSWORD}
@@ -83,7 +84,7 @@ services:
 
   caddy:
     container_name: caddy
-    hostname: appguard.local
+    hostname: appguard.servasec.local
     build:
       context: caddy/
       dockerfile: Dockerfile
