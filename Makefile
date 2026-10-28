@@ -28,12 +28,16 @@ pro: ## Pull and start pro prod stack (requires docker login for the private app
 	APPGUARD_BACKEND_IMAGE=registry.gitlab.com/servasec/appguard-pro/backend $(COMPOSE_PROD) up -d
 
 pro-build: ## Build and start pro prod stack (requires appguard-pro repo)
-	cp $(PRO_REPO_DIR)/backend/pro/*.go backend/pro/
-	BUILD_TAGS=pro $(COMPOSE_BUILD) up --build -d
+	@mkdir -p .build/appguard-pro-backend; \
+	cp -a backend/. .build/appguard-pro-backend/; \
+	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go .build/appguard-pro-backend/pro/; \
+	APPGUARD_BACKEND_CONTEXT=.build/appguard-pro-backend BUILD_TAGS=pro $(COMPOSE_BUILD) up --build -d
 
 dev-pro: ## Start dev stack with pro features (requires appguard-pro repo)
-	cp $(PRO_REPO_DIR)/backend/pro/*.go backend/pro/
-	BUILD_TAGS=pro $(COMPOSE_DEV) up --build -d
+	@mkdir -p .build/appguard-pro-backend; \
+	cp -a backend/. .build/appguard-pro-backend/; \
+	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go .build/appguard-pro-backend/pro/; \
+	APPGUARD_BACKEND_CONTEXT=.build/appguard-pro-backend BUILD_TAGS=pro $(COMPOSE_DEV) up --build -d
 
 down-prod: ## Stop prod stack
 	$(COMPOSE_PROD) down

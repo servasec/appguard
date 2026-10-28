@@ -32,7 +32,9 @@ jobs:
       - name: Copy pro files
         if: ${{ env.PRO_APP_ID != '' }}
         run: |
-          cp pro/backend/pro/impl_*.go backend/pro/
+          mkdir -p /tmp/appguard-pro-context
+          cp -a backend/. /tmp/appguard-pro-context/
+          cp pro/backend/pro/impl_*.go /tmp/appguard-pro-context/pro/
       - name: Set up Docker Buildx
         if: ${{ env.PRO_APP_ID != '' }}
         uses: docker/setup-buildx-action@v3
@@ -60,7 +62,7 @@ jobs:
         env:
           DOCKER_BUILD_RECORD_UPLOAD: false
         with:
-          context: ./backend
+          context: /tmp/appguard-pro-context
           target: prod
           build-args: |
             BUILD_TAGS=pro

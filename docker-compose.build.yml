@@ -8,7 +8,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ${APPGUARD_BACKEND_CONTEXT:-./backend}
       dockerfile: Dockerfile
       target: prod
       args:

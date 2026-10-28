@@ -25,7 +25,7 @@ services:
     container_name: backend
     user: "${USER_UID:-1000}:${USER_GID:-1000}"
     build:
-      context: ./backend
+      context: ${APPGUARD_BACKEND_CONTEXT:-./backend}
       dockerfile: Dockerfile
       target: dev
       args:
@@ -59,7 +59,7 @@ services:
       SSO_OIDC_ISSUER_URL: ${SSO_OIDC_ISSUER_URL:-}
       SSO_OIDC_SCOPES: ${SSO_OIDC_SCOPES:-}
     volumes:
-      - ./backend:/app
+      - ${APPGUARD_BACKEND_CONTEXT:-./backend}:/app
     networks:
       public:
       private:
