@@ -90,7 +90,7 @@ For isolation requirements, see the [deployment boundary guidance](docs/architec
 
 ## Scanner support
 
-Look at https://docs.servasec.com/scanners/overview/ for the complete list of scanners supported.
+Look at https://docs.servasec.com/docs/appguard/integrations/scanners for scanner integration guidance.
 
 ## Frequently Asked Questions
 
@@ -104,7 +104,8 @@ AppGuard ingests Semgrep, Trivy, Gitleaks, OSV-Scanner, tfsec, SARIF exports and
 
 ## Environment Variables
 
-See https://docs.servasec.com/getting-started/configuration/
+See https://docs.servasec.com/docs/appguard/api for the API reference and
+https://docs.servasec.com/docs/appguard/getting-started/configuration for configuration guidance.
 
 ## License
 
