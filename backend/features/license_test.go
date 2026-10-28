@@ -122,7 +122,11 @@ func TestParseLicense_WrongSigningMethod(t *testing.T) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, licenseClaims{
 		Features: []string{FeatureAuditLog},
 	})
-	signed, err := token.SignedString([]byte("some-hmac-secret"))
+	hmacKey := make([]byte, 32)
+	for i := range hmacKey {
+		hmacKey[i] = 0x6b
+	}
+	signed, err := token.SignedString(hmacKey)
 	if err != nil {
 		t.Fatal("failed to sign with HMAC:", err)
 	}
