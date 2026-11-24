@@ -1,5 +1,254 @@
 # Changelog
 
+## [2.6.0](https://github.com/servasec/servasec/compare/v2.5.3...v2.6.0) (2026-09-03)
+
+
+### 🧩 Features
+
+* **backend:** Add casbin policy for sso settings ([0f76fcf](https://github.com/servasec/servasec/commit/0f76fcf55b065db2ec5779fe06581fab614abc31))
+* Users crud  for admins ([b1db426](https://github.com/servasec/servasec/commit/b1db426f07fa3b82dff24cabf59cc31ebc2ffc9c))
+
+## [2.5.3](https://github.com/servasec/servasec/compare/v2.5.2...v2.5.3) (2026-09-02)
+
+
+### 🐛 Bug fixes
+
+* License compliant with SSC_SITE_NAME ([1933f05](https://github.com/servasec/servasec/commit/1933f0501516eba4d5801442670640df28686a9a))
+
+## [2.5.2](https://github.com/servasec/servasec/compare/v2.5.1...v2.5.2) (2026-09-01)
+
+
+### 🐛 Bug fixes
+
+* Docker-compose service names as env var ([630c93d](https://github.com/servasec/servasec/commit/630c93db7f336958a80b0350b26c03739d495371))
+
+## [2.5.1](https://github.com/servasec/servasec/compare/v2.5.0...v2.5.1) (2026-08-30)
+
+
+### 🐛 Bug fixes
+
+* **pro:** Container image repo moved ([afcfe52](https://github.com/servasec/servasec/commit/afcfe52e9ba2e97c0eb115ac81acd0bda1dffea8))
+
+## [2.5.0](https://github.com/servasec/servasec/compare/v2.4.3...v2.5.0) (2026-08-30)
+
+
+### 🧩 Features
+
+* Add version management in backend ([c35c072](https://github.com/servasec/servasec/commit/c35c07207d3c4150968bb9b5e55d4dd06c3623f5))
+* **backend:** Enforce license-based quotas and accept control-plane signing key ([b013bd7](https://github.com/servasec/servasec/commit/b013bd7a4ef074824fd8f8fdf7ea4e63f0c312c7))
+* **frontend:** Quota card and 402 quota-exceeded hints ([e70398e](https://github.com/servasec/servasec/commit/e70398ea662cbd08d60e82d204acc75aa14b5efa))
+
+
+### 🐛 Bug fixes
+
+* **backend:** Wrong condition policy controller ([b323188](https://github.com/servasec/servasec/commit/b323188053f75b10bc9368a035d32dd2cc2756be))
+* **install:** Pull images from GitLab registry by default ([1ec2f08](https://github.com/servasec/servasec/commit/1ec2f08c015346be65c875dd999d9ff111f9dc53))
+
+
+### 📝 Documentation
+
+* Full bruno collection + demo env runner ([bb81b5a](https://github.com/servasec/servasec/commit/bb81b5ae57dd1db4cfd8307b7d56443ac16dc595))
+* Readme enhance ([6035d59](https://github.com/servasec/servasec/commit/6035d59ccb0b91899eaec5d7bee382a8aaf24379))
+* **readme:** Refresh branding, FAQ and community links ([ef3223a](https://github.com/servasec/servasec/commit/ef3223ac3715c41badd07e3c3eea230e69a16042))
+
+
+### 🤖 Continuous integration
+
+* Auto bump Helm Chart appVersion prop on release ([fa2f9fa](https://github.com/servasec/servasec/commit/fa2f9fa7d6d884c562e1d8396357520a81932d4c))
+* Publish images and helm chart to GitLab registry ([f49ccc5](https://github.com/servasec/servasec/commit/f49ccc559c81ce5d8c7b1f2c9a6e005dd6f0db52))
+
+## [2.4.3](https://github.com/servasec/servasec/compare/v2.4.2...v2.4.3) (2026-07-28)
+
+
+### 🐛 Bug fixes
+
+* **compose:** Default values for env vars ([d6a5238](https://github.com/servasec/servasec/commit/d6a5238abc6edb24998380b25afc2177bed9017f))
+* Install script enhance + default dir ([2211d75](https://github.com/servasec/servasec/commit/2211d750c29113174b14764e798f2432e625e3f6))
+* Install script wrong functions orders ([4082632](https://github.com/servasec/servasec/commit/4082632b4bdefbe9e7e29f7bb0a69ec3123ec267))
+
+## [2.4.2](https://github.com/servasec/servasec/compare/v2.4.1...v2.4.2) (2026-07-27)
+
+
+### 🐛 Bug fixes
+
+* Install script enhance ([197127f](https://github.com/servasec/servasec/commit/197127f8fb52e7b5c753f22aa8f1d419e67aac6c))
+
+
+### 📝 Documentation
+
+* Readme update ([170580d](https://github.com/servasec/servasec/commit/170580db3813260e90887b437770796fe499108d))
+
+## [2.4.1](https://github.com/servasec/servasec/compare/v2.4.0...v2.4.1) (2026-07-27)
+
+
+### 🐛 Bug fixes
+
+* Install script requirements wrong conditions ([7e9b8ee](https://github.com/servasec/servasec/commit/7e9b8ee91ad6d44b5e4a27f02754bfe3beb485a4))
+
+## [2.4.0](https://github.com/servasec/servasec/compare/v2.3.0...v2.4.0) (2026-07-24)
+
+
+### 🧩 Features
+
+* **frontend:** Add shadcn/ui, command palette, and collapsible sidebar ([291a608](https://github.com/servasec/servasec/commit/291a608d1bc3b6f3244f43f79290b146ada9b0e5))
+* **frontend:** Add theme system and page transitions ([1184e9e](https://github.com/servasec/servasec/commit/1184e9e026f6a2b78c72ba8ed0af238ec9a9efa5))
+* **frontend:** GitHub theme added ([cec8ba4](https://github.com/servasec/servasec/commit/cec8ba4afc3e06c4a25b1d877a21ae6628099d36))
+* Install script added (using compose) ([97c6e70](https://github.com/servasec/servasec/commit/97c6e709e5b564c139b96ae6e6f04246509d6fcd))
+* Issue tracker for GitHub & GitLab ([d432bc9](https://github.com/servasec/servasec/commit/d432bc9242c4b713116c7db4ec1be88d8bbf789a))
+
+
+### 🐛 Bug fixes
+
+* **backend:** UpdateCurrentUser resetpwd wrong json property name ([1a887f7](https://github.com/servasec/servasec/commit/1a887f7bc0bad59204558eb00f51ee1b8318046e))
+* **frontend:** Findings page & details enhance ([919e7dc](https://github.com/servasec/servasec/commit/919e7dc8757e3a79a856f4b06b279df716e146f3))
+* **frontend:** Onboarding modal flickering fixd ([c25810c](https://github.com/servasec/servasec/commit/c25810c5c8abb69b9c43511f889bf69eb56f714f))
+* **frontend:** Severity badges UI fix in findings list & details ([12d8c39](https://github.com/servasec/servasec/commit/12d8c3993e4fded0bb550996550ca89052b6298a))
+* Install script support pro edition ([72eaf6b](https://github.com/servasec/servasec/commit/72eaf6bb5ad93b5c74bef8c952ce50d27273cdad))
+
+
+### 📝 Documentation
+
+* Readme fix ([da464b0](https://github.com/servasec/servasec/commit/da464b058d019285d37e07bd53664a9ebc19c3a7))
+
+## [2.3.0](https://github.com/servasec/servasec/compare/v2.2.0...v2.3.0) (2026-07-17)
+
+
+### 🧩 Features
+
+* **frontend:** Onboarding tour for new users ([cf609e7](https://github.com/servasec/servasec/commit/cf609e7aa4c1b2ca08857ce2a9d824286b988792))
+* **migrations:** Add FK constraints + soft delete support ([1bc04ce](https://github.com/servasec/servasec/commit/1bc04ce672cf9882ebf338c87eb85d845173f4f0))
+* **models:** Add soft delete (gorm.DeletedAt) to User, Group, Team ([2788063](https://github.com/servasec/servasec/commit/27880638a75493fae32b32b6d7a1650227e94817))
+* **parsers:** Add bandit, gosec, kube-bench, kubescape, npm-audit, osv-scanner, tfsec parsers ([c777e08](https://github.com/servasec/servasec/commit/c777e08ac701ee74e2397fcf277fb9c926809a25))
+
+
+### 🐛 Bug fixes
+
+* **parsers:** Fix grype detection signature, bandit CWE handling ([6e73bc5](https://github.com/servasec/servasec/commit/6e73bc5da9bb180f2c07e9be0c86415144bf5eb2))
+* **security:** Add DB transactions, batch insert, file size limits ([fb92da1](https://github.com/servasec/servasec/commit/fb92da193872321f27b534f5940bdbce81effc2a))
+* **security:** Harden auth, finding, team, webhook, policy controllers ([b439e9e](https://github.com/servasec/servasec/commit/b439e9e468380149def6802de77d20c74287ca46))
+* **seeder:** Remove hardcoded fallback, fatalf on missing admin ([c501428](https://github.com/servasec/servasec/commit/c5014286a80eab37fb4b4e25e09c8e20ea63525e))
+
+## [2.2.0](https://github.com/servasec/servasec/compare/v2.1.4...v2.2.0) (2026-07-07)
+
+
+### 🧩 Features
+
+* Upgrade process reviewed ([3020fab](https://github.com/servasec/servasec/commit/3020fab9b2a695a47175d406c51815fbff6180cd))
+* Upgrade process reviewed pt2 ([f3672fc](https://github.com/servasec/servasec/commit/f3672fce23c044512be2d52b860107d4f30e4708))
+
+
+### 🐛 Bug fixes
+
+* **helm:** Caddy removed from helm chart; traefik is now the official ingress controller we support ([c773911](https://github.com/servasec/servasec/commit/c7739114e18015ed586c850f05418575520fc28c))
+
+## [2.1.4](https://github.com/servasec/servasec/compare/v2.1.3...v2.1.4) (2026-07-06)
+
+
+### 🐛 Bug fixes
+
+* **backend:** Json security + opengrep false positive ([4052cfb](https://github.com/servasec/servasec/commit/4052cfbbea24a12dd5febb48f8e625fc693441cb))
+
+
+### 🤖 Continuous integration
+
+* Final workflows trigger ([f8b1b80](https://github.com/servasec/servasec/commit/f8b1b803db575491ceb0e1c7776aff8a10713e45))
+
+## [2.1.3](https://github.com/servasec/servasec/compare/v2.1.2...v2.1.3) (2026-07-06)
+
+
+### 🤖 Continuous integration
+
+* Use custom Github APP for release workflow ([ace3941](https://github.com/servasec/servasec/commit/ace3941c98a22a3b1c1f4c7bd832939df3025aad))
+
+## [2.1.2](https://github.com/servasec/servasec/compare/v2.1.1...v2.1.2) (2026-07-06)
+
+
+### 🤖 Continuous integration
+
+* Workflow trigger only on version tag ([a7c41a3](https://github.com/servasec/servasec/commit/a7c41a359bbf2af80ccfb2b009f1c452fcd10abe))
+* Workflow trigger only on version tag ([2874590](https://github.com/servasec/servasec/commit/28745901db497f934a8fce51f6903336c507d42f))
+
+## [2.1.1](https://github.com/servasec/servasec/compare/v2.1.0...v2.1.1) (2026-07-06)
+
+
+### 🤖 Continuous integration
+
+* Fix docker image workflows ([0f40e08](https://github.com/servasec/servasec/commit/0f40e0807d246f4eea23a14bececd40d065ee9f1))
+* Fix docker image workflows ([8077636](https://github.com/servasec/servasec/commit/8077636663f8b82f28a8249c32c397ab5eb5c27c))
+
+## [2.1.0](https://github.com/servasec/servasec/compare/v2.0.0...v2.1.0) (2026-07-06)
+
+
+### 🧩 Features
+
+* **kubernetes:** Helm chart 0.1.0 ([c1e8040](https://github.com/servasec/servasec/commit/c1e80409f81aeaa6daf2b3525a6de0664aeacaaf))
+
+
+### 🐛 Bug fixes
+
+* **backend:** Sql unique version index ([b7dd87b](https://github.com/servasec/servasec/commit/b7dd87badc84b67a60e79b25acaf88486f7096c1))
+* Caddy service missing var ([4e7778e](https://github.com/servasec/servasec/commit/4e7778edc718a90f37456f2a26d056ca2fc80da5))
+* Dead env var removed ([34cd9c3](https://github.com/servasec/servasec/commit/34cd9c335268d57b184b49741f957b1d97149c60))
+
+
+### 🤖 Continuous integration
+
+* Docker-pro wokflow secrets to env ([5576414](https://github.com/servasec/servasec/commit/557641464b0342332111e772cfb9162ac00fef0f))
+* Docker-pro workflow fix ([9a5cb59](https://github.com/servasec/servasec/commit/9a5cb59b0e4bb409fbd5b3c5a25d203ed0854e0f))
+* Fix security-reports ([3e198a6](https://github.com/servasec/servasec/commit/3e198a65c86a3893f461ced21e74e01dc261fa03))
+* Ghcr images ([d80533b](https://github.com/servasec/servasec/commit/d80533b7046f76f363a48e3627de639ced75cb97))
+* Helm chart release ([429e67a](https://github.com/servasec/servasec/commit/429e67a2a8d4f50c9c26724146d950d36e8a69a9))
+
+## [2.0.0](https://github.com/servasec/servasec/compare/v1.0.0...v2.0.0) (2026-07-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **backend:** SSC_ADMIN_PASSWORD & CSRF_SECRET mandatories in prod env + GORM AutoMigrate deleted
+
+### 🧩 Features
+
+* **backend:** SSC_ADMIN_PASSWORD & CSRF_SECRET mandatories in prod env + GORM AutoMigrate deleted ([94dfcb8](https://github.com/servasec/servasec/commit/94dfcb8b738df07306f5fa671e4adf4babdf268e))
+* New database migration system with goose & upgrade script + md ([47d8abf](https://github.com/servasec/servasec/commit/47d8abfb09e406908e3ae12cf10dbe5505fb342d))
+
+
+### 🐛 Bug fixes
+
+* **frontend:** Dashboard bar chart color ([bac0287](https://github.com/servasec/servasec/commit/bac02870cde337c9aa19b2708ba647083ad2c814))
+
+## [1.0.0](https://github.com/servasec/servasec/compare/v0.3.1...v1.0.0) (2026-07-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **backend:** /applications/by-slug/:slug replaced by /groups/:groupPath/applications/:slug
+
+### 🧩 Features
+
+* **backend:** /applications/by-slug/:slug replaced by /groups/:groupPath/applications/:slug ([79ca7d8](https://github.com/servasec/servasec/commit/79ca7d8bdd302a74cd606cac86df00109806d5ba))
+* **backend:** Implement openapi annotations ([bd940cb](https://github.com/servasec/servasec/commit/bd940cbd0311c7e74676f01060c5b2a2037d0812))
+* **backend:** Implement openapi annotations ([894e32f](https://github.com/servasec/servasec/commit/894e32f751bda0dda181bf169de9ea9f02f739e8))
+* Better ingest methods for CI/CD processes ([e24911c](https://github.com/servasec/servasec/commit/e24911c14387f4538a1511b185509948dd64a652))
+* Sarif parser ([036dfbc](https://github.com/servasec/servasec/commit/036dfbca61cbe7c433e0a56cc5f3c7450e9b310b))
+* Sarif parser ([9c1c00e](https://github.com/servasec/servasec/commit/9c1c00e6ed37790a1eb228f94ee190c54e2c4864))
+
+
+### 🐛 Bug fixes
+
+* API ingest processes + user api key ([f9d741e](https://github.com/servasec/servasec/commit/f9d741e9cfc95fa2d76de60d4420923c73ea34cb))
+* **frontend:** Scans & findings pages filters rework ([93a378f](https://github.com/servasec/servasec/commit/93a378fce2a1b129db42e2568ff0d4c12ad6f9bd))
+* **frontend:** Toast UI revamp ([b22d465](https://github.com/servasec/servasec/commit/b22d465d4616172864ec7ca9c8fc7080c317b28b))
+
+## [0.3.1](https://github.com/servasec/servasec/compare/v0.3.0...v0.3.1) (2026-06-30)
+
+
+### 🤖 Continuous integration
+
+* Fix release please target branch ([55b22e9](https://github.com/servasec/servasec/commit/55b22e989b27ad02e5cf338936885eb078196684))
+* Fix release please target branch ([56ea036](https://github.com/servasec/servasec/commit/56ea036de678eb006f8c64ee81d6d1abe12ebcdf))
+* Release please target branch in action input ([0471dd9](https://github.com/servasec/servasec/commit/0471dd988dd84598be4044db0522e11b1f5250e6))
+* Release please target branch in action input ([7a0f669](https://github.com/servasec/servasec/commit/7a0f669560e601e28cdb5f2e714c8d09735573ae))
+
 ## [0.3.0](https://github.com/servasec/servasec/compare/v0.2.0...v0.3.0) (2026-06-30)
 
 
