@@ -23,6 +23,7 @@ func GetScans(c *gin.Context) {
 	query := config.DB.
 		Select("scans.*, (SELECT COUNT(*) FROM findings WHERE findings.scan_id = scans.id) as findings_count").
 		Preload("ScannerType").
+		Preload("Integration").
 		Preload("ApplicationVersion").
 		Joins("JOIN application_versions ON application_versions.id = scans.application_version_id").
 		Order("scans.created_at DESC")
@@ -60,7 +61,7 @@ func GetScans(c *gin.Context) {
 // @Router /scans/{id} [get]
 func GetScan(c *gin.Context) {
 	var scan models.Scan
-	if err := config.DB.Preload("ScannerType").Preload("ApplicationVersion").First(&scan, c.Param("id")).Error; err != nil {
+	if err := config.DB.Preload("ScannerType").Preload("Integration").Preload("ApplicationVersion").First(&scan, c.Param("id")).Error; err != nil {
 		utils.NotFoundError(c, "Scan not found")
 		return
 	}

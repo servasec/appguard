@@ -60,7 +60,7 @@ export default function App({ Component, pageProps }: AppProps) {
             attribute="class"
             defaultTheme="dark"
             storageKey="appguard-theme"
-            themes={["light", "dark", "catppuccin", "github", "nord"]}
+            themes={["light", "dark"]}
           >
             <AppLayout>
               <ErrorBoundary>

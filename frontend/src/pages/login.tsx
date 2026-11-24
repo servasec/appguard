@@ -80,9 +80,9 @@ const LoginPage = () => {
             <div className="flex flex-col items-center gap-3 text-center">
               <Brand className="justify-center" />
               <div>
-                <p className="text-sm text-muted-foreground mt-0.5">
+                <h1 className="mt-0.5 text-base font-semibold text-foreground">
                   Sign in to your account
-                </p>
+                </h1>
               </div>
             </div>
 

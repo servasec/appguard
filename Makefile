@@ -1,4 +1,4 @@
-.PHONY: dev down down-clean prod down-prod community community-build pro pro-build dev-pro logs ps help swagger swagger-copy migrate-create migrate-status
+.PHONY: dev down down-clean prod down-prod community community-build pro pro-build dev-pro test logs ps help swagger swagger-copy migrate-create migrate-status
 
 COMPOSE_DEV  := USER_UID=$(shell id -u) USER_GID=$(shell id -g) GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.dev.yml
 COMPOSE_PROD := GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.prod.yml
@@ -28,16 +28,25 @@ pro: ## Pull and start pro prod stack (requires docker login for the private app
 	APPGUARD_BACKEND_IMAGE=registry.gitlab.com/servasec/appguard-pro/backend $(COMPOSE_PROD) up -d
 
 pro-build: ## Build and start pro prod stack (requires appguard-pro repo)
-	@mkdir -p .build/appguard-pro-backend; \
-	cp -a backend/. .build/appguard-pro-backend/; \
-	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go .build/appguard-pro-backend/pro/; \
-	APPGUARD_BACKEND_CONTEXT=.build/appguard-pro-backend BUILD_TAGS=pro $(COMPOSE_BUILD) up --build -d
+	@set -eu; \
+	mkdir -p .build; \
+	pro_context=$$(mktemp -d .build/appguard-pro-backend.XXXXXX); \
+	trap 'rm -rf "$$pro_context"' EXIT; \
+	cp -a backend/. "$$pro_context/"; \
+	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go "$$pro_context/pro/"; \
+	APPGUARD_BACKEND_CONTEXT="$$pro_context" BUILD_TAGS=pro $(COMPOSE_BUILD) up --build -d
 
 dev-pro: ## Start dev stack with pro features (requires appguard-pro repo)
-	@mkdir -p .build/appguard-pro-backend; \
-	cp -a backend/. .build/appguard-pro-backend/; \
-	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go .build/appguard-pro-backend/pro/; \
-	APPGUARD_BACKEND_CONTEXT=.build/appguard-pro-backend BUILD_TAGS=pro $(COMPOSE_DEV) up --build -d
+	@set -eu; \
+	mkdir -p .build; \
+	pro_context=$$(mktemp -d .build/appguard-pro-backend.XXXXXX); \
+	cp -a backend/. "$$pro_context/"; \
+	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go "$$pro_context/pro/"; \
+	APPGUARD_BACKEND_CONTEXT="$$pro_context" BUILD_TAGS=pro $(COMPOSE_DEV) up --build -d
+
+test: ## Run backend tests, frontend type check, and frontend production build
+	cd backend && go test ./...
+	cd frontend && npm run lint && npx tsc --noEmit && npm run build
 
 down-prod: ## Stop prod stack
 	$(COMPOSE_PROD) down

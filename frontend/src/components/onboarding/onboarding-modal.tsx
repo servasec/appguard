@@ -71,7 +71,7 @@ export function OnboardingModal({ open, onComplete, user }: OnboardingModalProps
   const isLast = step === slides.length - 1;
   const isFirst = step === 0;
 
-  const isDark = resolvedTheme === "dark" || resolvedTheme === "catppuccin" || resolvedTheme === "github" || resolvedTheme === "nord";
+  const isDark = resolvedTheme === "dark";
   const markSrc = "/assets/appguard-mark.svg";
   const imgSrc = slide.image
     ? isDark && slide.image.dark

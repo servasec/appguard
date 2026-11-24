@@ -127,6 +127,13 @@ make logs
 
 # Stop
 make down
+
+# Run backend tests and verify the frontend
+make test
+
+# Start with AppGuard Pro features (requires ../appguard-pro)
+make dev-pro
 ```
 
-Requires: Docker, Docker Compose, `make`.
+Requires: Docker, Docker Compose, `make`; `make test` also requires Go and Node.js/npm
+with frontend dependencies installed from `frontend/package-lock.json` (`npm ci`).

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/servasec/appguard/backend/config"
@@ -26,7 +27,41 @@ func GetScannerTypes(c *gin.Context) {
 		utils.InternalServerError(c, "failed to fetch scanner types")
 		return
 	}
+	for i := range scannerTypes {
+		scannerTypes[i].Category, scannerTypes[i].Formats = scannerCapabilities(scannerTypes[i])
+	}
 	utils.OKResponse(c, scannerTypes)
+}
+
+func scannerCapabilities(scannerType models.ScannerType) (string, []string) {
+	name := strings.ToLower(scannerType.Name)
+	category := "SAST"
+	switch name {
+	case "trivy", "grype", "snyk", "osv-scanner", "npm-audit", "pip-audit", "govulncheck":
+		category = "SCA"
+	case "gitleaks", "trufflehog", "detect-secrets":
+		category = "Secrets"
+	case "checkov", "tfsec", "terrascan":
+		category = "IaC"
+	case "nuclei":
+		category = "DAST"
+	case "kubescape", "kube-bench", "docker-bench-security", "kube-linter":
+		category = "Cloud & containers"
+	case "sarif":
+		category = "Generic"
+	}
+
+	if name == "sarif" {
+		return category, []string{"SARIF"}
+	}
+	formats := []string{"JSON"}
+	if strings.Contains(strings.ToLower(scannerType.Description), "sarif") {
+		formats = append(formats, "SARIF")
+	}
+	if name == "nuclei" {
+		formats = []string{"JSON", "JSONL"}
+	}
+	return category, formats
 }
 
 // UpdateScannerType enables or disables a scanner type (admin only)

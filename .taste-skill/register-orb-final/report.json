@@ -1,0 +1,730 @@
+{
+ "url": "http://localhost:3001/register",
+ "at": "2026-10-30T16:10:35.216Z",
+ "allow": [
+  "palette-purple"
+ ],
+ "viewports": [
+  {
+   "width": 1440,
+   "height": 900,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    0.43
+   ],
+   "motion": {
+    "elements": 5,
+    "css": 1,
+    "transitions": 0,
+    "scripted": 4,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "page": {
+     "height": 900,
+     "screens": 1,
+     "words": 21,
+     "img": 1,
+     "video": 0,
+     "canvas": 0,
+     "svg": 2,
+     "sections": 2,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Create your account",
+     "words": 3,
+     "chars": 19,
+     "lines": 1,
+     "size": 16,
+     "vw": 1.1,
+     "font": "ui-sans-serif",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.5,
+     "top": 273,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Create your account",
+     "words": 3,
+     "lines": 1,
+     "size": 16,
+     "font": "ui-sans-serif"
+    },
+    "headings": [],
+    "headingSummary": {
+     "count": 0,
+     "maxLines": 0,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "ui-sans-serif",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      10,
+      14,
+      16,
+      20
+     ],
+     "sizeCount": 4,
+     "notLoaded": [],
+     "body": null,
+     "measureChars": null,
+     "max": {
+      "size": 20,
+      "vw": 1.4,
+      "font": "ui-sans-serif",
+      "text": "Focus on findings that matter"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.83,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#101014",
+     "bodyBgHsl": {
+      "h": 240,
+      "s": 0.11,
+      "l": 0.07
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#101014",
+       "top": 0,
+       "hsl": {
+        "h": 240,
+        "s": 0.11,
+        "l": 0.07
+       }
+      },
+      {
+       "color": "#17171c",
+       "top": 0,
+       "hsl": {
+        "h": 240,
+        "s": 0.1,
+        "l": 0.1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#e9e9ed",
+       "share": 0.38
+      },
+      {
+       "color": "#888896",
+       "share": 0.28
+      },
+      {
+       "color": "#eaeaee",
+       "share": 0.23
+      },
+      {
+       "color": "#101014",
+       "share": 0.06
+      },
+      {
+       "color": "#9a73de",
+       "share": 0.06
+      }
+     ],
+     "button": {
+      "bg": "#9a73de",
+      "hsl": {
+       "h": 262,
+       "s": 0.62,
+       "l": 0.66
+      },
+      "fg": "#101014"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 1,
+     "inHero": 1,
+     "radius": 6,
+     "height": 40,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Register"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 1,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 1,
+     "boxRadius": 6,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [
+     {
+      "type": "svg",
+      "ratio": 0.2
+     }
+    ],
+    "nav": null,
+    "fontsLoaded": []
+   },
+   "layout": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "pageH": 900,
+    "margins": {
+     "left": 16,
+     "right": 260
+    },
+    "sections": [],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Create your account",
+      "size": 16,
+      "top": 273,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [],
+    "leftBlocks": 0,
+    "bodySize": 16,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0.19,
+    "voidBox": {
+     "x": 60,
+     "y": 720,
+     "w": 1380,
+     "h": 180
+    }
+   },
+   "app": {
+    "viewport": {
+     "w": 1440,
+     "h": 900
+    },
+    "dark": true,
+    "ground": "#101014",
+    "sidebar": null,
+    "topbar": null,
+    "canvas": {
+     "left": 16,
+     "right": 260
+    },
+    "hero": {
+     "text": "Create your account",
+     "words": 3,
+     "chars": 19,
+     "lines": 1,
+     "size": 16,
+     "vw": 1.1,
+     "font": "ui-sans-serif",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.5,
+     "top": 273,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 1,
+    "layout": {
+     "panels": 1,
+     "firstScreen": 1,
+     "ragged": [],
+     "voids": [
+      {
+       "gap": 142,
+       "at": 706,
+       "panel": "Create your account"
+      }
+     ]
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 2,
+     "radii": [
+      [
+       0,
+       1
+      ],
+      [
+       6,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 1,
+    "placeholders": [],
+    "type": {
+     "under13": 0.09,
+     "tiny": 1,
+     "tinySamples": [
+      "by servasec 10px"
+     ],
+     "sizes": [
+      10,
+      14,
+      16,
+      20
+     ]
+    },
+    "title": {
+     "text": "Create your account",
+     "size": 16,
+     "top": 273
+    },
+    "colourShare": 0.007
+   },
+   "consoleErrors": []
+  },
+  {
+   "width": 390,
+   "height": 844,
+   "load": "load",
+   "screens": 1,
+   "filled": [
+    0.85
+   ],
+   "motion": {
+    "elements": 4,
+    "css": 0,
+    "transitions": 0,
+    "scripted": 4,
+    "videos": 0,
+    "playingVideos": 0
+   },
+   "metrics": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "page": {
+     "height": 844,
+     "screens": 1,
+     "words": 16,
+     "img": 1,
+     "video": 0,
+     "canvas": 0,
+     "svg": 2,
+     "sections": 2,
+     "horizontalOverflow": 0,
+     "overflowCulprits": [],
+     "uiFragments": 0,
+     "uiAbuse": false,
+     "realPictures": 0,
+     "videoCount": 0,
+     "uiPictures": 0,
+     "pictureSamples": [],
+     "blendText": 0,
+     "sideScrollers": 0,
+     "brokenImages": [],
+     "emoji": [],
+     "videosNoPoster": 0
+    },
+    "hero": {
+     "text": "Create your account",
+     "words": 3,
+     "chars": 19,
+     "lines": 1,
+     "size": 16,
+     "vw": 4.1,
+     "font": "ui-sans-serif",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.5,
+     "top": 245,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "h1": {
+     "text": "Create your account",
+     "words": 3,
+     "lines": 1,
+     "size": 16,
+     "font": "ui-sans-serif"
+    },
+    "headings": [],
+    "headingSummary": {
+     "count": 0,
+     "maxLines": 0,
+     "over2Lines": 0,
+     "statements": 0,
+     "centered": 0,
+     "medianWords": null,
+     "mixedFontHeadings": 0
+    },
+    "type": {
+     "families": [
+      {
+       "family": "ui-sans-serif",
+       "share": 1,
+       "mono": false
+      }
+     ],
+     "familyCount": 1,
+     "sizes": [
+      10,
+      14,
+      16
+     ],
+     "sizeCount": 3,
+     "notLoaded": [],
+     "body": null,
+     "measureChars": null,
+     "max": {
+      "size": 16,
+      "vw": 4.1,
+      "font": "ui-sans-serif",
+      "text": "Create your account"
+     },
+     "monoShare": 0,
+     "monoProseShare": 0,
+     "monoFamilies": [],
+     "monoSamples": [],
+     "microLabels": 0,
+     "microLabelShare": 0,
+     "microSamples": [],
+     "upperShare": 0,
+     "centerShare": 0.79,
+     "smallText": 0
+    },
+    "eyebrows": [],
+    "numbered": [],
+    "color": {
+     "bodyBg": "#101014",
+     "bodyBgHsl": {
+      "h": 240,
+      "s": 0.11,
+      "l": 0.07
+     },
+     "dark": true,
+     "sectionBgs": [
+      {
+       "color": "#101014",
+       "top": 0,
+       "hsl": {
+        "h": 240,
+        "s": 0.11,
+        "l": 0.07
+       }
+      },
+      {
+       "color": "#17171c",
+       "top": 0,
+       "hsl": {
+        "h": 240,
+        "s": 0.1,
+        "l": 0.1
+       }
+      }
+     ],
+     "textColors": [
+      {
+       "color": "#e9e9ed",
+       "share": 0.49
+      },
+      {
+       "color": "#888896",
+       "share": 0.36
+      },
+      {
+       "color": "#101014",
+       "share": 0.08
+      },
+      {
+       "color": "#9a73de",
+       "share": 0.07
+      }
+     ],
+     "button": {
+      "bg": "#9a73de",
+      "hsl": {
+       "h": 262,
+       "s": 0.62,
+       "l": 0.66
+      },
+      "fg": "#101014"
+     },
+     "lowContrast": []
+    },
+    "buttons": {
+     "count": 1,
+     "inHero": 1,
+     "radius": 6,
+     "height": 40,
+     "withShadow": 0,
+     "withGradient": 0,
+     "mono": 0,
+     "upper": 0,
+     "heroLabels": [
+      "Register"
+     ]
+    },
+    "surfaces": {
+     "shadowStatic": 0,
+     "shadowOverlay": 0,
+     "shadowSamples": [],
+     "gradients": 0,
+     "scrims": 0,
+     "gradientSamples": [],
+     "gradientText": 0,
+     "hairlines": 0,
+     "hairlineSamples": [],
+     "outlinedBoxes": 1,
+     "dashed": 0,
+     "blurred": 0,
+     "roundedBoxes": 1,
+     "boxRadius": 6,
+     "squareMedia": 0,
+     "roundedMedia": 0,
+     "mediaRadius": 0,
+     "textShadow": 0,
+     "cardRows": []
+    },
+    "heroMedia": [],
+    "nav": null,
+    "fontsLoaded": []
+   },
+   "layout": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "pageH": 844,
+    "margins": {
+     "left": 16,
+     "right": 65
+    },
+    "sections": [],
+    "gaps": [],
+    "h1s": [
+     {
+      "text": "Create your account",
+      "size": 16,
+      "top": 245,
+      "firstScreen": true
+     }
+    ],
+    "edgeText": [],
+    "edges": [],
+    "leftBlocks": 0,
+    "bodySize": 16,
+    "stage": false,
+    "explains": false,
+    "slivers": [],
+    "voidShare": 0,
+    "voidBox": null
+   },
+   "app": {
+    "viewport": {
+     "w": 390,
+     "h": 844
+    },
+    "dark": true,
+    "ground": "#101014",
+    "sidebar": null,
+    "topbar": null,
+    "canvas": {
+     "left": 16,
+     "right": 65
+    },
+    "hero": {
+     "text": "Create your account",
+     "words": 3,
+     "chars": 19,
+     "lines": 1,
+     "size": 16,
+     "vw": 4.1,
+     "font": "ui-sans-serif",
+     "weight": 600,
+     "tracking": 0,
+     "leading": 1.5,
+     "top": 245,
+     "tag": "h1",
+     "kind": "heading",
+     "align": "left",
+     "position": "left"
+    },
+    "charts": 0,
+    "layout": {
+     "panels": 1,
+     "firstScreen": 1,
+     "ragged": [],
+     "voids": []
+    },
+    "tiles": 0,
+    "panels": {
+     "count": 1,
+     "radii": [
+      [
+       6,
+       1
+      ]
+     ],
+     "heavyBorders": 0,
+     "borderSamples": [],
+     "heavyShadows": 0,
+     "softShadows": 0,
+     "shadowSamples": [],
+     "glass": 0
+    },
+    "chips": {
+     "count": 0,
+     "hues": 0,
+     "samples": []
+    },
+    "numbers": {
+     "cells": 0,
+     "leftAligned": 0,
+     "figures": 0,
+     "tabularShare": null,
+     "kpiMax": null
+    },
+    "rows": null,
+    "chartHues": 0,
+    "placeholders": [],
+    "type": {
+     "under13": 0.09,
+     "tiny": 1,
+     "tinySamples": [
+      "by servasec 10px"
+     ],
+     "sizes": [
+      10,
+      14,
+      16,
+      18
+     ]
+    },
+    "title": {
+     "text": "Create your account",
+     "size": 16,
+     "top": 245
+    },
+    "colourShare": 0.028
+   },
+   "consoleErrors": []
+  }
+ ],
+ "findings": [
+  {
+   "level": "WARN",
+   "id": "unused-canvas",
+   "width": 1440,
+   "message": "The content stops 260px short of the right edge while it starts 16px from the sidebar.",
+   "fix": "Let the grid fill the canvas (columns in fr units), or centre a capped canvas with equal margins. A dead strip on one side reads as unfinished."
+  },
+  {
+   "level": "WARN",
+   "id": "panel-void",
+   "width": 1440,
+   "message": "1 card(s) hold a blank band inside: 142px in \"Create your account\".",
+   "fix": "A card stretches to its neighbour only when it has content to fill. Keep a legend or a note directly under its chart (only an action or a total may sit at a stretched card's foot), let a short card keep its own height (align-items: start), and let a filtered block shrink to its rows."
+  }
+ ],
+ "images": [
+  {
+   "viewport": "desktop",
+   "width": 1440,
+   "fold": "/home/h0lm/repos/github.com/servasec/appguard/.taste-skill/register-orb-final/desktop-fold.jpg",
+   "pages": [
+    "/home/h0lm/repos/github.com/servasec/appguard/.taste-skill/register-orb-final/desktop-page-01.jpg"
+   ],
+   "film": []
+  },
+  {
+   "viewport": "mobile",
+   "width": 390,
+   "fold": "/home/h0lm/repos/github.com/servasec/appguard/.taste-skill/register-orb-final/mobile-fold.jpg",
+   "pages": [
+    "/home/h0lm/repos/github.com/servasec/appguard/.taste-skill/register-orb-final/mobile-page-01.jpg"
+   ],
+   "film": []
+  }
+ ]
+}

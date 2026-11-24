@@ -5,8 +5,8 @@ import { useEffect, useState, useCallback } from "react"
 import { Command } from "cmdk"
 import { useTheme } from "next-themes"
 import {
-  Bug, Scan, AppWindow, Users, Shield, ShieldAlert,
-  FolderKanban, Settings, ScrollText, ScanLine, LogOut,
+  Bug, Scan, AppWindow, Users, Shield, ShieldAlert, PlugZap,
+  FolderKanban, Settings, ScrollText, LogOut,
   Sun, Moon, Search,
 } from "lucide-react"
 import { useAuth } from "@/context/AuthContext"
@@ -32,7 +32,7 @@ export function CommandPalette() {
   }, [])
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === "dark" || theme === "catppuccin" || theme === "github" || theme === "nord" ? "light" : "dark")
+    setTheme(theme === "dark" ? "light" : "dark")
   }, [theme, setTheme])
 
   const runCommand = useCallback((action?: () => void, href?: string) => {
@@ -54,11 +54,12 @@ export function CommandPalette() {
 
   if (!mounted) return null
 
-  const isDark = theme === "dark" || theme === "catppuccin" || theme === "github" || theme === "nord"
+  const isDark = theme === "dark"
 
   const items: CommandItem[] = [
     { label: "Dashboard", href: "/", icon: <AppWindow className="h-4 w-4" />, group: "Navigation", shortcut: "G D" },
     { label: "Applications", href: "/applications", icon: <AppWindow className="h-4 w-4" />, group: "Navigation", shortcut: "G A" },
+    { label: "Integrations", href: "/integrations", icon: <PlugZap className="h-4 w-4" />, group: "Navigation" },
     { label: "Groups", href: "/groups", icon: <FolderKanban className="h-4 w-4" />, group: "Navigation", shortcut: "G G" },
     { label: "Scans", href: "/scans", icon: <Scan className="h-4 w-4" />, group: "Navigation", shortcut: "G S" },
     { label: "Findings", href: "/findings", icon: <Bug className="h-4 w-4" />, group: "Navigation", shortcut: "G F" },
@@ -67,8 +68,8 @@ export function CommandPalette() {
     ...(user?.role === "admin" ? [
       { label: "Users", href: "/users", icon: <Users className="h-4 w-4" />, group: "Admin" },
       { label: "Permissions", href: "/admin/permissions", icon: <Shield className="h-4 w-4" />, group: "Admin" },
-      { label: "Scanner Types", href: "/admin/scanner-types", icon: <ScanLine className="h-4 w-4" />, group: "Admin" },
       { label: "Audit Log", href: "/admin/audit-log", icon: <ScrollText className="h-4 w-4" />, group: "Admin" },
+      { label: "Settings", href: "/settings", icon: <Settings className="h-4 w-4" />, group: "Admin" },
     ] : []),
     { label: "Profile", href: "/profile", icon: <Settings className="h-4 w-4" />, group: "Account" },
     { label: isDark ? "Light mode" : "Dark mode", icon: isDark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />, group: "Appearance", action: toggleTheme },

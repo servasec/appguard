@@ -1,35 +1,44 @@
 "use client"
 
+import { useEffect, useState } from "react"
+import Link from "next/link"
 import { useRouter } from "next/router"
-import { useAuth } from "@/context/AuthContext"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { BackToTop } from "@/components/back-to-top"
-import { useTheme } from "next-themes"
+import { AnimatePresence, motion, useReducedMotion } from "motion/react"
 import {
   AppWindow,
+  Bug,
+  ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
   FolderKanban,
+  LogOut,
+  Menu,
+  Moon,
+  PlugZap,
+  Scan,
+  ScrollText,
+  Shield,
+  ShieldAlert,
+  Settings2,
+  Sun,
+  User,
   Users,
   UsersRound,
-  Shield,
-  Sun,
-  Moon,
-  ChevronLeft,
-  ChevronDown,
-  KeyRound,
-  User,
-  LogOut,
-  Scan,
-  Bug,
-  ScrollText,
-  ScanLine,
-  ShieldAlert,
-  Menu,
   X,
 } from "lucide-react"
-import { useState, useEffect, useRef } from "react"
-import Link from "next/link"
-import type { User as UserProfile } from "@/lib/types"
+import { useAuth } from "@/context/AuthContext"
+import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { useTheme } from "next-themes"
 import { Brand } from "@/components/brand"
+import type { User as UserProfile } from "@/lib/types"
 
 interface NavItem {
   label: string
@@ -45,122 +54,143 @@ interface NavGroup {
 }
 
 const navGroups: NavGroup[] = [
-    {
-      label: "Security",
-      items: [
-        { label: "Applications", href: "/applications", icon: <AppWindow className="h-4 w-4" /> },
-        { label: "Groups", href: "/groups", icon: <FolderKanban className="h-4 w-4" /> },
-        { label: "Scans", href: "/scans", icon: <Scan className="h-4 w-4" /> },
-        { label: "Findings", href: "/findings", icon: <Bug className="h-4 w-4" /> },
-        { label: "Policies", href: "/policies", icon: <ShieldAlert className="h-4 w-4" /> },
-      ],
-    },
-    {
-      label: "Administration",
-      items: [
-        { label: "Users", href: "/users", icon: <Users className="h-4 w-4" />, adminOnly: true },
-        { label: "Teams", href: "/teams", icon: <UsersRound className="h-4 w-4" /> },
-        { label: "Permissions", href: "/admin/permissions", icon: <Shield className="h-4 w-4" />, adminOnly: true },
-        { label: "Scanner Types", href: "/admin/scanner-types", icon: <ScanLine className="h-4 w-4" />, adminOnly: true },
-        { label: "Audit Log", href: "/admin/audit-log", icon: <ScrollText className="h-4 w-4" />, adminOnly: true, feature: "audit_log" },
-        { label: "Single Sign-On", href: "/admin/sso", icon: <KeyRound className="h-4 w-4" />, adminOnly: true, feature: "sso" },
-      ],
-    },
+  {
+    label: "Security",
+    items: [
+      { label: "Applications", href: "/applications", icon: <AppWindow className="h-4 w-4" /> },
+      { label: "Integrations", href: "/integrations", icon: <PlugZap className="h-4 w-4" /> },
+      { label: "Groups", href: "/groups", icon: <FolderKanban className="h-4 w-4" /> },
+      { label: "Scans", href: "/scans", icon: <Scan className="h-4 w-4" /> },
+      { label: "Findings", href: "/findings", icon: <Bug className="h-4 w-4" /> },
+      { label: "Policies", href: "/policies", icon: <ShieldAlert className="h-4 w-4" /> },
+    ],
+  },
+  {
+    label: "Administration",
+    items: [
+      { label: "Users", href: "/users", icon: <Users className="h-4 w-4" />, adminOnly: true },
+      { label: "Teams", href: "/teams", icon: <UsersRound className="h-4 w-4" /> },
+      { label: "Permissions", href: "/admin/permissions", icon: <Shield className="h-4 w-4" />, adminOnly: true },
+      { label: "Audit Log", href: "/admin/audit-log", icon: <ScrollText className="h-4 w-4" />, adminOnly: true, feature: "audit_log" },
+      { label: "Settings", href: "/settings", icon: <Settings2 className="h-4 w-4" />, adminOnly: true },
+    ],
+  },
 ]
 
-function UserMenu({
-  user,
-  onLogout,
+const collapsedGroupSeparatorClass = "mx-auto mb-2 h-px w-6 bg-border first:hidden" // taste-skill-ignore: Extrack uses a one-pixel divider between collapsed groups
+
+function SidebarNavItem({
+  item,
+  active,
   collapsed,
+  reduceMotion,
+  onNavigate,
+}: {
+  item: NavItem
+  active: boolean
+  collapsed: boolean
+  reduceMotion: boolean
+  onNavigate: () => void
+}) {
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      title={collapsed ? item.label : undefined}
+      aria-current={active ? "page" : undefined}
+      className={`group relative flex h-9 items-center gap-2.5 rounded-lg px-2.5 text-[13px] font-medium transition-[color,background-color,transform] active:translate-y-px motion-reduce:active:translate-y-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+        collapsed ? "justify-center px-0" : ""
+      } ${
+        active
+          ? "bg-primary/10 text-foreground"
+          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+      }`}
+    >
+      {active && (
+        <span
+          aria-hidden="true"
+          className="absolute left-0 top-1/2 h-4 w-[2px] -translate-y-1/2"
+        >
+          <motion.span
+            initial={reduceMotion ? false : { opacity: 0, scaleY: 0.65 }}
+            animate={{ opacity: 1, scaleY: 1 }}
+            transition={{ duration: reduceMotion ? 0 : 0.16, ease: [0.16, 1, 0.3, 1] }}
+            className="block h-full w-full rounded-r-full bg-primary"
+          />
+        </span>
+      )}
+      <span className={`shrink-0 ${active ? "text-primary" : ""}`}>{item.icon}</span>
+      {!collapsed && <span className="truncate">{item.label}</span>}
+    </Link>
+  )
+}
+
+function AccountMenu({
+  user,
+  collapsed,
+  theme,
+  onToggleTheme,
+  onLogout,
 }: {
   user: UserProfile | null
-  onLogout: () => void
   collapsed: boolean
+  theme: string | undefined
+  onToggleTheme: () => void
+  onLogout: () => void
 }) {
-  const [open, setOpen] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
-
-  useEffect(() => {
-    const handleClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false)
-      }
-    }
-    document.addEventListener("mousedown", handleClick)
-    return () => document.removeEventListener("mousedown", handleClick)
-  }, [])
-
-  if (collapsed) {
-    return (
-      <Link
-        href="/profile"
-        className="flex items-center justify-center w-full rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
-        title="Profile"
-      >
-        <Avatar className="h-7 w-7 shrink-0">
-          <AvatarFallback className="bg-accent text-accent-foreground text-[11px]">
-            {user?.username?.charAt(0).toUpperCase() || "U"}
-          </AvatarFallback>
-        </Avatar>
-      </Link>
-    )
-  }
+  const isDark = theme === "dark"
 
   return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen(!open)}
-        className={`flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${
-          collapsed ? "justify-center" : ""
-        }`}
-      >
-        <Avatar className="h-7 w-7 shrink-0">
-          <AvatarFallback className="bg-accent text-accent-foreground text-[11px]">
-            {user?.username?.charAt(0).toUpperCase() || "U"}
-          </AvatarFallback>
-        </Avatar>
-        {!collapsed && (
-          <>
-            <div className="flex-1 min-w-0 text-left">
-              <p className="text-sm font-medium truncate text-foreground">
-                {user?.username}
-              </p>
-              <p className="text-[11px] text-muted-foreground/60 capitalize truncate">
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          type="button"
+          aria-label="Account menu"
+          className={`focus-ring group flex w-full items-center gap-2.5 rounded-lg p-1.5 text-left transition-colors hover:bg-accent ${
+            collapsed ? "justify-center" : ""
+          }`}
+        >
+          <Avatar className="h-7 w-7 shrink-0 text-[10px]">
+            <AvatarFallback className="bg-muted text-foreground">
+              {user?.username?.charAt(0).toUpperCase() || "U"}
+            </AvatarFallback>
+          </Avatar>
+          {!collapsed && (
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-xs font-medium">{user?.username}</span>
+              <span className="block truncate text-[10px] text-muted-foreground">
                 {user?.role}
-              </p>
-            </div>
-            <ChevronDown
-              className={`h-3.5 w-3.5 shrink-0 text-muted-foreground/50 transition-transform ${
-                open ? "rotate-180" : ""
-              }`}
-            />
-          </>
-        )}
-      </button>
-
-      {open && (
-        <div className="absolute bottom-full left-0 right-0 mb-1 rounded-md border bg-popover text-popover-foreground py-1 shadow-lg">
-          <div className="px-3 py-2 text-xs text-muted-foreground border-b">
-            Signed in as
-          </div>
-          <Link
-            href="/profile"
-            onClick={() => setOpen(false)}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:bg-accent transition-colors"
-          >
+              </span>
+            </span>
+          )}
+          {!collapsed && (
+            <ChevronDown className="h-3.5 w-3.5 shrink-0 text-muted-foreground/50 transition-transform group-data-[state=open]:rotate-180" />
+          )}
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="top" align={collapsed ? "start" : "end"} sideOffset={6} className="w-56">
+        <DropdownMenuLabel className="font-normal">
+          <span className="block truncate text-xs font-medium">{user?.username}</span>
+          <span className="block truncate text-[10px] text-muted-foreground">{user?.email}</span>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild className="gap-2">
+          <Link href="/profile">
             <User className="h-3.5 w-3.5" />
             Profile
           </Link>
-          <button
-            onClick={onLogout}
-            className="flex w-full items-center gap-2 px-3 py-2 text-sm text-foreground/80 hover:bg-accent transition-colors"
-          >
-            <LogOut className="h-3.5 w-3.5" />
-            Sign out
-          </button>
-        </div>
-      )}
-    </div>
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={onToggleTheme} className="gap-2">
+          {isDark ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+          {isDark ? "Light mode" : "Dark mode"}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onSelect={onLogout} className="gap-2 text-destructive focus:text-destructive">
+          <LogOut className="h-3.5 w-3.5" />
+          Sign out
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -168,26 +198,17 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter()
   const { loggedIn, user, logout, authChecked } = useAuth()
   const { theme, setTheme } = useTheme()
+  const reduceMotion = Boolean(useReducedMotion())
   const [collapsed, setCollapsed] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const sidebarCollapsed = collapsed && !mobileOpen
-  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
+    const saved = window.localStorage.getItem("appguard-sidebar-collapsed")
+    setCollapsed(saved === "true")
   }, [])
 
   useEffect(() => {
-    const saved = localStorage.getItem("appguard-sidebar-collapsed")
-    if (saved === "true") {
-      setCollapsed(true)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("appguard-sidebar-collapsed", String(collapsed))
-    }
+    window.localStorage.setItem("appguard-sidebar-collapsed", String(collapsed))
   }, [collapsed])
 
   useEffect(() => {
@@ -203,146 +224,155 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", closeOnEscape)
   }, [mobileOpen])
 
-  const isPublicPage =
-    router.pathname === "/login" || router.pathname === "/register"
+  useEffect(() => {
+    if (theme && theme !== "dark" && theme !== "light") setTheme("dark")
+  }, [theme, setTheme])
 
-  if (!authChecked || !loggedIn || isPublicPage) {
-    return <>{children}</>
-  }
+  const isPublicPage = router.pathname === "/login" || router.pathname === "/register"
+  if (!authChecked || !loggedIn || isPublicPage) return <>{children}</>
 
   const handleLogout = async () => {
     await logout(true)
   }
 
-  const isActive = (href: string) => {
-    if (href === "/") return router.pathname === "/"
-    return router.pathname.startsWith(href)
-  }
+  const isActive = (href: string) =>
+    href === "/" ? router.pathname === "/" : router.pathname.startsWith(href)
+
+  const visibleGroups = navGroups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => {
+        if (item.adminOnly && user?.role !== "admin") return false
+        if (item.feature && !user?.features?.includes(item.feature)) return false
+        return true
+      }),
+    }))
+    .filter((group) => group.items.length > 0)
 
   return (
-    <div className="h-screen overflow-hidden bg-background flex">
-      <header className="fixed inset-x-0 top-0 z-30 flex h-12 items-center justify-between border-b bg-background px-4 md:hidden">
-        <Link href="/" aria-label="AppGuard home"><Brand /></Link>
-        <button
-          type="button"
-          aria-label={mobileOpen ? "Close navigation" : "Open navigation"}
-          aria-expanded={mobileOpen}
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-10 w-10 items-center justify-center text-muted-foreground hover:text-foreground"
-        >
-          {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-        </button>
-      </header>
-      {mobileOpen && <button className="fixed inset-0 z-40 bg-black/30 md:hidden" aria-label="Close navigation" onClick={() => setMobileOpen(false)} />}
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-sidebar shrink-0 transition-transform duration-200 md:relative md:z-auto md:translate-x-0 ${
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
-        } ${collapsed ? "md:w-16" : "md:w-64"}`}
-      >
-        <div className="h-14 flex items-center justify-between px-4 shrink-0">
-          <Link href="/" className="flex min-w-0 items-center gap-3 hover:opacity-80 transition-opacity" onClick={() => setMobileOpen(false)}>
-            <Brand collapsed={sidebarCollapsed} />
-          </Link>
-          <button
+    <div className="flex h-dvh overflow-hidden bg-background">
+      <AnimatePresence initial={false}>
+        {mobileOpen && (
+          <motion.button
+            key="mobile-menu-backdrop"
             type="button"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: reduceMotion ? 0.12 : 0.2 }}
+            className="fixed inset-0 z-30 bg-foreground/15 lg:hidden"
             aria-label="Close navigation"
             onClick={() => setMobileOpen(false)}
-            className="flex h-9 w-9 items-center justify-center text-muted-foreground hover:text-foreground md:hidden"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          />
+        )}
+      </AnimatePresence>
+
+      <motion.aside
+        initial={false}
+        animate={{ width: collapsed ? 72 : 248 }}
+        transition={{ duration: reduceMotion ? 0 : 0.22, ease: [0.16, 1, 0.3, 1] }}
+        className={`fixed inset-y-0 left-0 z-40 flex shrink-0 flex-col bg-sidebar transition-transform duration-200 motion-reduce:transition-none lg:relative lg:z-auto ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+        }`}
+      >
+        <div className={`flex h-14 shrink-0 items-center ${collapsed ? "justify-center px-2" : "justify-between px-4"}`}>
+          <Link href="/" aria-label="AppGuard home" className="min-w-0 hover:opacity-80 transition-opacity">
+            <Brand collapsed={collapsed} />
+          </Link>
+          {!collapsed && (
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                aria-label="Collapse sidebar"
+                onClick={() => setCollapsed(true)}
+                className="hidden h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:inline-flex"
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                aria-label="Close navigation"
+                onClick={() => setMobileOpen(false)}
+                className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring lg:hidden"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-3 space-y-1">
-          {navGroups.map((group) => {
-            const visibleItems = group.items.filter((item) => {
-              if (item.adminOnly && user?.role !== "admin") return false
-              if (item.feature && !user?.features?.includes(item.feature)) return false
-              return true
-            })
-            if (visibleItems.length === 0) return null
+        {collapsed && (
+          <div className="hidden justify-center py-2 lg:flex">
+            <button
+              type="button"
+              aria-label="Expand sidebar"
+              onClick={() => setCollapsed(false)}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <ChevronsRight className="h-4 w-4" />
+            </button>
+          </div>
+        )}
 
-            return (
-              <div key={group.label}>
-                {!sidebarCollapsed && (
-                  <div className="px-4 py-1.5">
-                    <span className="text-xs font-semibold text-sidebar-foreground/60">
-                      {group.label}
-                    </span>
-                  </div>
-                )}
-                {visibleItems.map((item) => {
-                  const active = isActive(item.href)
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileOpen(false)}
-                      className={`relative flex items-center h-9 text-sm transition-colors ${
-                        sidebarCollapsed ? "justify-center" : "gap-3 px-4"
-                      } ${
-                        active
-                          ? "bg-sidebar-accent text-sidebar-accent-foreground font-medium"
-                          : "text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-foreground"
-                      }`}
-                      title={sidebarCollapsed ? item.label : undefined}
-                    >
-                      {active && (
-                        <span className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-primary" />
-                      )}
-                      <span className="shrink-0">{item.icon}</span>
-                      {!sidebarCollapsed && <span>{item.label}</span>}
-                    </Link>
-                  )
-                })}
+        <nav className={`scrollbar-thin flex-1 overflow-y-auto py-4 ${collapsed ? "px-2" : "px-3"}`}>
+          {visibleGroups.map((group) => (
+            <div key={group.label} className="mb-5 last:mb-0">
+              {!collapsed ? (
+                <p className="mb-1.5 px-2.5 text-[11px] font-medium text-muted-foreground/80">
+                  {group.label}
+                </p>
+              ) : (
+                <div className={collapsedGroupSeparatorClass} />
+              )}
+              <div className="space-y-0.5">
+                {group.items.map((item) => (
+                  <SidebarNavItem
+                    key={item.href}
+                    item={item}
+                    active={isActive(item.href)}
+                    collapsed={collapsed}
+                    reduceMotion={reduceMotion}
+                    onNavigate={() => setMobileOpen(false)}
+                  />
+                ))}
               </div>
-            )
-          })}
+            </div>
+          ))}
         </nav>
 
-        <div className="pt-1 pb-2 px-2 space-y-0.5 shrink-0">
-          {mounted && (
+        <div className={`shrink-0 p-2.5 ${collapsed ? "flex flex-col items-center gap-2" : ""}`}>
+          <AccountMenu
+            user={user}
+            collapsed={collapsed}
+            theme={theme}
+            onToggleTheme={() => setTheme(theme === "dark" ? "light" : "dark")}
+            onLogout={handleLogout}
+          />
+        </div>
+      </motion.aside>
+
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+        <header className="flex h-14 shrink-0 items-center justify-between px-4 lg:hidden">
+          <div className="flex items-center gap-2">
             <button
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-              className={`flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/85 hover:bg-sidebar-accent hover:text-sidebar-foreground w-full transition-colors ${
-                sidebarCollapsed ? "justify-center" : ""
-              }`}
+              type="button"
+              aria-label="Open navigation"
+              aria-expanded={mobileOpen}
+              onClick={() => setMobileOpen(true)}
+              className="flex h-8 w-8 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              {theme === "dark" || theme === "catppuccin" || theme === "github" || theme === "nord" ? (
-                <Sun className="h-4 w-4 shrink-0" />
-              ) : (
-                <Moon className="h-4 w-4 shrink-0" />
-              )}
-              {!sidebarCollapsed && (
-                <span>{theme === "light" ? "Dark mode" : "Light mode"}</span>
-              )}
+              <Menu className="h-4 w-4" />
             </button>
-          )}
+            <Brand />
+          </div>
+        </header>
 
-          <UserMenu user={user} onLogout={handleLogout} collapsed={collapsed && !mobileOpen} />
-
-          <button
-            onClick={() => setCollapsed(!collapsed)}
-            className={`hidden md:flex items-center gap-3 px-3 py-2 rounded-md text-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground w-full transition-colors ${
-              collapsed ? "justify-center" : ""
-            }`}
-          >
-            <ChevronLeft
-              className={`h-4 w-4 shrink-0 transition-transform ${
-                collapsed ? "rotate-180" : ""
-              }`}
-            />
-            {!collapsed && <span>Collapse sidebar</span>}
-          </button>
-        </div>
-      </aside>
-
-      <main className="flex-1 flex flex-col min-w-0 min-h-0 pt-14 md:pt-2 px-0 md:pl-0 md:pr-2 pb-0 md:pb-2">
-        <div id="main-scroll" className="bg-card rounded-none md:rounded-xl border-0 md:border border-border/60 flex-1 min-h-0 overflow-y-auto p-4 md:p-6">
-          {children}
-        </div>
-        <BackToTop />
-      </main>
+        <main className="min-h-0 min-w-0 flex-1 p-3 sm:p-4 lg:p-5">
+          <div id="main-scroll" className="scrollbar-thin h-full overflow-y-auto rounded-xl border border-border/70 bg-card p-5 sm:p-6 lg:p-8">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

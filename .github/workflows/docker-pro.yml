@@ -29,6 +29,7 @@ jobs:
           repository: servasec/appguard-pro
           token: ${{ steps.app-token.outputs.token }}
           path: pro
+          ref: rename/appguard
       - name: Copy pro files
         if: ${{ env.PRO_APP_ID != '' }}
         run: |

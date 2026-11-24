@@ -119,6 +119,16 @@ func RequireResourceAccessByParam(resourceType string, paramName string, action 
 	}
 }
 
+func RequireHumanAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.GetString("auth_method") == "app_token" {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "user authentication is required"})
+			return
+		}
+		c.Next()
+	}
+}
+
 func resolveFindingAppID(c *gin.Context) (uint, bool) {
 	findingID := c.Param("id")
 	var appID uint

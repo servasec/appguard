@@ -9,6 +9,44 @@ permissions:
   contents: read
 
 jobs:
+  pro-backend:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    env:
+      PRO_APP_ID: ${{ secrets.PRO_APP_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require private Pro repository access
+        if: ${{ env.PRO_APP_ID == '' }}
+        run: echo "PRO_APP_ID is required to validate the AppGuard Pro build" && exit 1
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.PRO_APP_ID }}
+          private-key: ${{ secrets.PRO_APP_PRIVATE_KEY }}
+          owner: servasec
+          repositories: appguard-pro
+      - name: Checkout Pro implementation
+        uses: actions/checkout@v4
+        with:
+          repository: servasec/appguard-pro
+          token: ${{ steps.app-token.outputs.token }}
+          path: pro
+          ref: rename/appguard
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: Build and test with Pro implementations
+        run: |
+          mkdir -p /tmp/appguard-pro-context
+          cp -a backend/. /tmp/appguard-pro-context/
+          cp pro/backend/pro/impl_*.go /tmp/appguard-pro-context/pro/
+          cd /tmp/appguard-pro-context
+          go test -tags pro ./...
+          go build -tags pro ./...
+
   backend:
     runs-on: ubuntu-latest
     steps:
@@ -36,6 +74,9 @@ jobs:
       - name: Type check
         working-directory: frontend
         run: npx tsc --noEmit
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
       - name: Production build
         working-directory: frontend
         run: npm run build

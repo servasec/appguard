@@ -119,6 +119,7 @@ static/generated/
 secrets/
 
 docs/tasks
+docs/product
 
 # ==========================================================
 # Runtime state

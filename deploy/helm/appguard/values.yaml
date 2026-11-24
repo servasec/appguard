@@ -76,6 +76,16 @@ secrets:
     oidcClientSecret: ""
     oidcIssuerUrl: ""
     oidcScopes: "openid profile email"
+  repositories:
+    githubAppId: ""
+    githubClientId: ""
+    githubClientSecret: ""
+    githubAppSlug: ""
+    githubPrivateKeyB64: ""
+    githubWebhookSecret: ""
+    gitlabClientId: ""
+    gitlabClientSecret: ""
+    gitlabBaseUrl: "https://gitlab.com"
 
 resources:
   backend:

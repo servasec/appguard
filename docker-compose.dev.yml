@@ -18,6 +18,10 @@ services:
       - ./frontend:/app
       - /app/node_modules
     command: npm run dev
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     networks:
       public:
 
@@ -59,8 +63,21 @@ services:
       SSO_OIDC_CLIENT_SECRET: ${SSO_OIDC_CLIENT_SECRET:-}
       SSO_OIDC_ISSUER_URL: ${SSO_OIDC_ISSUER_URL:-}
       SSO_OIDC_SCOPES: ${SSO_OIDC_SCOPES:-}
+      REPOSITORY_GITHUB_APP_ID: ${REPOSITORY_GITHUB_APP_ID:-}
+      REPOSITORY_GITHUB_CLIENT_ID: ${REPOSITORY_GITHUB_CLIENT_ID:-}
+      REPOSITORY_GITHUB_CLIENT_SECRET: ${REPOSITORY_GITHUB_CLIENT_SECRET:-}
+      REPOSITORY_GITHUB_APP_SLUG: ${REPOSITORY_GITHUB_APP_SLUG:-}
+      REPOSITORY_GITHUB_PRIVATE_KEY_B64: ${REPOSITORY_GITHUB_PRIVATE_KEY_B64:-}
+      REPOSITORY_GITHUB_WEBHOOK_SECRET: ${REPOSITORY_GITHUB_WEBHOOK_SECRET:-}
+      REPOSITORY_GITLAB_CLIENT_ID: ${REPOSITORY_GITLAB_CLIENT_ID:-}
+      REPOSITORY_GITLAB_CLIENT_SECRET: ${REPOSITORY_GITLAB_CLIENT_SECRET:-}
+      REPOSITORY_GITLAB_BASE_URL: ${REPOSITORY_GITLAB_BASE_URL:-https://gitlab.com}
     volumes:
       - ${APPGUARD_BACKEND_CONTEXT:-./backend}:/app
+    ulimits:
+      nofile:
+        soft: 65536
+        hard: 65536
     networks:
       public:
       private:

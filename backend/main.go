@@ -105,6 +105,7 @@ func main() {
 	routes.RegisterDashboardRoutes(router)
 	routes.RegisterGroupRoutes(router)
 	routes.RegisterApplicationRoutes(router)
+	routes.RegisterRepositoryRoutes(router)
 	routes.RegisterScanRoutes(router)
 	routes.RegisterFindingRoutes(router)
 	routes.RegisterTeamRoutes(router)

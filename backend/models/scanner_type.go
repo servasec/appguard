@@ -7,6 +7,8 @@ type ScannerType struct {
 	Name        string    `gorm:"unique;not null;size:30" json:"name"`
 	Description string    `gorm:"size:500" json:"description"`
 	Parser      string    `gorm:"size:100" json:"parser"`
+	Category    string    `gorm:"-" json:"category,omitempty"`
+	Formats     []string  `gorm:"-" json:"formats,omitempty"`
 	Enabled     bool      `gorm:"default:true" json:"enabled"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
