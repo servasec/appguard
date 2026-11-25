@@ -102,6 +102,8 @@ temp/
 # ==========================================================
 public/generated/
 static/generated/
+/.taste-skill/auth-*/
+/.taste-skill/register-*/
 
 # ==========================================================
 # Database (if local dev)
