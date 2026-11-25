@@ -11,10 +11,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/debug"
-	"github.com/servasec/servasec/backend/models"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/debug"
+	"github.com/servasec/appguard/backend/models"
+	"github.com/servasec/appguard/backend/utils"
 )
 
 func resolveClaims(c *gin.Context) *utils.TokenClaims {

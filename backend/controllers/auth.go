@@ -9,12 +9,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/dto"
-	"github.com/servasec/servasec/backend/features"
-	"github.com/servasec/servasec/backend/models"
-	"github.com/servasec/servasec/backend/services"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/dto"
+	"github.com/servasec/appguard/backend/features"
+	"github.com/servasec/appguard/backend/models"
+	"github.com/servasec/appguard/backend/services"
+	"github.com/servasec/appguard/backend/utils"
 	"gorm.io/gorm"
 )
 

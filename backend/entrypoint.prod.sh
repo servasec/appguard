@@ -1,2 +1,2 @@
 #!/bin/sh
-exec /app/servasec
+exec /app/appguard

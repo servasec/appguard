@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
 )
 
 func TestRegister_Success(t *testing.T) {

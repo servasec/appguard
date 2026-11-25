@@ -1,15 +1,66 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
+	"github.com/servasec/appguard/backend/utils"
+	"gorm.io/gorm"
 )
+
+func validateManagedPermission(subject, resource, action string, allowWildcard bool) (string, uint, string, uint, error) {
+	parts := strings.Split(subject, ":")
+	if len(parts) != 2 || (parts[0] != "user" && parts[0] != "team") {
+		return "", 0, "", 0, fmt.Errorf("subject must be a user or team id")
+	}
+	subjectID, err := strconv.ParseUint(parts[1], 10, 64)
+	if err != nil || subjectID == 0 || subjectID > uint64(^uint(0)) {
+		return "", 0, "", 0, fmt.Errorf("invalid subject id")
+	}
+	resourceParts := strings.Split(resource, "/")
+	if len(resourceParts) != 3 || resourceParts[0] != "" || (resourceParts[1] != "applications" && resourceParts[1] != "groups") {
+		return "", 0, "", 0, fmt.Errorf("resource must be one application or group")
+	}
+	resourceID, err := strconv.ParseUint(resourceParts[2], 10, 64)
+	if err != nil || resourceID == 0 || resourceID > uint64(^uint(0)) {
+		return "", 0, "", 0, fmt.Errorf("invalid resource id")
+	}
+	if action != "read" && action != "write" && !(allowWildcard && action == "*") {
+		return "", 0, "", 0, fmt.Errorf("unsupported action")
+	}
+	return parts[0], uint(subjectID), resourceParts[1], uint(resourceID), nil
+}
+
+func ensureManagedPermissionEntities(subjectType string, subjectID uint, resourceType string, resourceID uint) error {
+	if subjectType == "user" {
+		var user models.User
+		if err := config.DB.First(&user, subjectID).Error; err != nil {
+			return err
+		}
+	} else {
+		var team models.Team
+		if err := config.DB.First(&team, subjectID).Error; err != nil {
+			return err
+		}
+	}
+	if resourceType == "applications" {
+		var app models.Application
+		if err := config.DB.First(&app, resourceID).Error; err != nil {
+			return err
+		}
+	} else {
+		var group models.Group
+		if err := config.DB.First(&group, resourceID).Error; err != nil {
+			return err
+		}
+	}
+	return nil
+}
 
 type PermissionPolicy struct {
 	ID       int    `json:"id"`
@@ -29,11 +80,15 @@ func GetPermissions(c *gin.Context) {
 	filter := c.Query("subject")
 
 	var policies []PermissionPolicy
-	allPolicies, _ := config.CEF.GetPolicy()
+	allPolicies, err := config.CEF.GetPolicy()
+	if err != nil {
+		utils.InternalServerError(c, "failed to load permissions")
+		return
+	}
 
 	for i, p := range allPolicies {
 		if len(p) >= 3 {
-			if filter != "" && !strings.HasPrefix(p[0], filter) {
+			if filter != "" && p[0] != filter {
 				continue
 			}
 			policies = append(policies, PermissionPolicy{
@@ -79,6 +134,18 @@ func GrantPermission(c *gin.Context) {
 		utils.BadRequestError(c, "subject or userId is required")
 		return
 	}
+	subjectType, subjectID, resourceType, resourceID, err := validateManagedPermission(sub, input.Resource, input.Action, false)
+	if err != nil {
+		utils.BadRequestError(c, "Only read or write access to one application or group can be granted")
+		return
+	}
+	if err := ensureManagedPermissionEntities(subjectType, subjectID, resourceType, resourceID); errors.Is(err, gorm.ErrRecordNotFound) {
+		utils.NotFoundError(c, "User, team or resource not found")
+		return
+	} else if err != nil {
+		utils.InternalServerError(c, "failed to verify permission scope")
+		return
+	}
 
 	added, err := config.CEF.AddPolicy(sub, input.Resource, input.Action)
 	if err != nil {
@@ -91,6 +158,7 @@ func GrantPermission(c *gin.Context) {
 	}
 
 	if err := config.CEF.SavePolicy(); err != nil {
+		_, _ = config.CEF.RemovePolicy(sub, input.Resource, input.Action)
 		utils.InternalServerError(c, "failed to save policy")
 		return
 	}
@@ -129,6 +197,18 @@ func RevokePermission(c *gin.Context) {
 		utils.BadRequestError(c, "subject or userId is required")
 		return
 	}
+	subjectType, subjectID, resourceType, resourceID, err := validateManagedPermission(sub, input.Resource, input.Action, true)
+	if err != nil {
+		utils.BadRequestError(c, "Only application or group permissions can be revoked")
+		return
+	}
+	if err := ensureManagedPermissionEntities(subjectType, subjectID, resourceType, resourceID); errors.Is(err, gorm.ErrRecordNotFound) {
+		utils.NotFoundError(c, "User, team or resource not found")
+		return
+	} else if err != nil {
+		utils.InternalServerError(c, "failed to verify permission scope")
+		return
+	}
 
 	removed, err := config.CEF.RemovePolicy(sub, input.Resource, input.Action)
 	if err != nil {
@@ -141,6 +221,7 @@ func RevokePermission(c *gin.Context) {
 	}
 
 	if err := config.CEF.SavePolicy(); err != nil {
+		_, _ = config.CEF.AddPolicy(sub, input.Resource, input.Action)
 		utils.InternalServerError(c, "failed to save policy")
 		return
 	}
@@ -292,5 +373,3 @@ func RevokeApplicationPermission(c *gin.Context) {
 
 	utils.OKResponse(c, gin.H{"message": "Permission revoked"})
 }
-
-

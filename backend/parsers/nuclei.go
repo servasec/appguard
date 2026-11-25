@@ -101,7 +101,7 @@ func nucleiToFinding(r nucleiResult) *FindingInput {
 		return nil
 	}
 
-	// Nuclei severities (info/low/medium/high/critical) already match servasec's
+	// Nuclei severities (info/low/medium/high/critical) already match appguard's
 	// scheme. Anything else (e.g. "unknown") is treated as informational.
 	severity := strings.ToLower(r.Info.Severity)
 	if validateSeverity(severity) != nil {

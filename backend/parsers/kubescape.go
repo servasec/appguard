@@ -11,22 +11,22 @@ type kubescapeOutput struct {
 }
 
 type kubescapeResult struct {
-	Resources  []kubescapeResource  `json:"resources"`
-	Controls   []kubescapeControl   `json:"controls"`
+	Resources []kubescapeResource `json:"resources"`
+	Controls  []kubescapeControl  `json:"controls"`
 }
 
 type kubescapeResource struct {
-	Name     string `json:"name"`
-	Kind     string `json:"kind"`
+	Name      string `json:"name"`
+	Kind      string `json:"kind"`
 	Namespace string `json:"namespace"`
 }
 
 type kubescapeControl struct {
-	ControlID   string `json:"controlID"`
-	Name        string `json:"name"`
-	Severity    string `json:"severity"`
-	Description string `json:"description"`
-	FailedResources int `json:"failedResources"`
+	ControlID       string `json:"controlID"`
+	Name            string `json:"name"`
+	Severity        string `json:"severity"`
+	Description     string `json:"description"`
+	FailedResources int    `json:"failedResources"`
 }
 
 func ParseKubescape(data []byte, filename string) ([]FindingInput, error) {

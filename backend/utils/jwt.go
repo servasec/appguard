@@ -3,15 +3,18 @@ package utils
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
 )
 
 var (
@@ -20,18 +23,46 @@ var (
 )
 
 func ValidateSecrets() {
-	if len(AccessSecret) == 0 {
-		log.Fatal("JWT_SECRET environment variable is required but not set")
+	if err := validateSecrets(os.Getenv); err != nil {
+		log.Fatal(err)
 	}
-	if len(AccessSecret) < 32 {
-		log.Fatal("JWT_SECRET must be at least 32 bytes (256 bits) for HS256")
+}
+
+func validateSecrets(getenv func(string) string) error {
+	for _, name := range []string{"JWT_SECRET", "REFRESH_SECRET", "CSRF_SECRET", "APPGUARD_FEATURES_ENCRYPTION_KEY"} {
+		value := getenv(name)
+		if len(value) < 32 {
+			return fmt.Errorf("%s must be a unique secret of at least 32 bytes (256 bits)", name)
+		}
+		lower := strings.ToLower(value)
+		if strings.HasPrefix(value, "REPLACE_WITH_") || strings.Contains(lower, "changeme") {
+			return fmt.Errorf("%s still contains an example value", name)
+		}
 	}
-	if len(RefreshSecret) == 0 {
-		log.Fatal("REFRESH_SECRET environment variable is required but not set")
+	adminPassword := getenv("APPGUARD_ADMIN_PASSWORD")
+	debugMode := getenv("APPGUARD_DEBUG_ENABLED") == "true"
+	if adminPassword == "" && !debugMode {
+		return fmt.Errorf("APPGUARD_ADMIN_PASSWORD is required in production")
 	}
-	if len(RefreshSecret) < 32 {
-		log.Fatal("REFRESH_SECRET must be at least 32 bytes (256 bits) for HS256")
+	if adminPassword != "" && len(adminPassword) < 12 {
+		return fmt.Errorf("APPGUARD_ADMIN_PASSWORD must be at least 12 bytes")
 	}
+	if adminPassword != "" && (strings.HasPrefix(adminPassword, "REPLACE_WITH_") || strings.EqualFold(adminPassword, "Admin1234!")) {
+		return fmt.Errorf("APPGUARD_ADMIN_PASSWORD still contains an example value")
+	}
+	if len(adminPassword) > 72 {
+		return fmt.Errorf("APPGUARD_ADMIN_PASSWORD must not exceed 72 bytes")
+	}
+	if !debugMode {
+		publicURL, err := url.Parse(getenv("APPGUARD_PUBLIC_URL"))
+		if err != nil || publicURL.Scheme != "https" || publicURL.Host == "" || publicURL.User != nil {
+			return fmt.Errorf("APPGUARD_PUBLIC_URL must be a valid HTTPS URL in production")
+		}
+		if domain := getenv("APPGUARD_PUBLIC_DOMAIN"); domain == "" || !strings.EqualFold(publicURL.Hostname(), domain) {
+			return fmt.Errorf("APPGUARD_PUBLIC_DOMAIN must match the HTTPS host in APPGUARD_PUBLIC_URL")
+		}
+	}
+	return nil
 }
 
 func hashToken(tokenStr string) string {

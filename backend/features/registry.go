@@ -2,7 +2,7 @@ package features
 
 var F *Registry
 
-// ProImplsLoaded is set to true by the private servasec-pro module's init().
+// ProImplsLoaded is set to true by the private appguard-pro module's init().
 // When false (community build), Init() ignores the license key and returns only free features.
 var ProImplsLoaded bool
 

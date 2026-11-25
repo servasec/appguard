@@ -8,7 +8,7 @@ import (
 var debugEnabled bool
 
 func init() {
-	debugEnabled = os.Getenv("SSC_DEBUG_ENABLED") == "true"
+	debugEnabled = os.Getenv("APPGUARD_DEBUG_ENABLED") == "true"
 }
 
 func Log(format string, v ...interface{}) {

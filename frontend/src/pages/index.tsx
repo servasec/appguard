@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { PageHeader } from "@/components/page-header"
 import {
-  Bug, Activity, User, Clock, ArrowUpRight, Plus, ShieldAlert,
+  ArrowUpRight, Plus,
 } from "lucide-react"
 import Link from "next/link"
 import axios from "@/lib/api"
@@ -14,10 +14,10 @@ import type { DashboardStats } from "@/lib/types"
 import { severityBarColors, severityColors, statusColors } from "@/lib/constants"
 
 const kpiConfig = [
-  { label: "Total findings", key: "totalFindings" as const, icon: Bug, color: "text-blue-500", bg: "bg-blue-500/10" },
-  { label: "Assigned to me", key: "myOpenFindings" as const, icon: User, color: "text-amber-500", bg: "bg-amber-500/10" },
-  { label: "Overdue", key: "overdueFindings" as const, icon: Clock, color: "text-red-500", bg: "bg-red-500/10" },
-  { label: "Recent scans", key: "recentScans" as const, icon: Activity, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+  { label: "Total findings", key: "totalFindings" as const },
+  { label: "Assigned to me", key: "myOpenFindings" as const },
+  { label: "Overdue", key: "overdueFindings" as const },
+  { label: "Recent scans", key: "recentScans" as const },
 ]
 
 export default function Dashboard() {
@@ -65,51 +65,32 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      <p className="text-sm text-muted-foreground">
-        Welcome back, <span className="text-foreground font-medium">{user?.username}</span>
-      </p>
-
-      {loadError ? (
-        <Card>
-          <CardContent className="p-8 text-center">
-            <ShieldAlert className="h-8 w-8 mx-auto mb-3 text-destructive opacity-60" />
-            <p className="text-sm font-medium text-foreground">Failed to load dashboard data</p>
-            <p className="text-xs text-muted-foreground mt-1">The server may be unavailable. Try refreshing the page.</p>
-          </CardContent>
-        </Card>
-      ) : loading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <Card key={i}><CardContent className="p-4"><Skeleton className="h-4 w-20 mb-2" /><Skeleton className="h-7 w-12" /></CardContent></Card>
-          ))}
-        </div>
-      ) : (
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          {kpiConfig.map((cfg) => {
-            const Icon = cfg.icon
-            const value = stats ? stats[cfg.key] : 0
-            const isOverdue = cfg.key === "overdueFindings" && value > 0
-            const isMyOpen = cfg.key === "myOpenFindings" && value > 0
-            return (
-              <Card key={cfg.key} className="border-border/50">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">{cfg.label}</p>
-                      <p className={`text-2xl font-bold tracking-tight ${isOverdue ? "text-red-500" : isMyOpen ? "text-amber-500" : ""}`}>
-                        {value}
-                      </p>
-                    </div>
-                    <div className={`rounded-md p-1.5 ${cfg.bg}`}>
-                      <Icon className={`h-4 w-4 ${cfg.color}`} />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
+      {loadError && (
+        <p role="alert" className="text-sm text-destructive">
+          Dashboard data could not be loaded. Refresh the page to try again.
+        </p>
       )}
+
+      <section aria-label="Dashboard summary" className="grid grid-cols-2 divide-x divide-y border-y sm:grid-cols-4 sm:divide-y-0">
+        {kpiConfig.map((cfg) => {
+          const value = stats ? stats[cfg.key] : 0
+          const attention = value > 0 && (cfg.key === "overdueFindings" || cfg.key === "myOpenFindings")
+          return (
+            <div key={cfg.key} className="min-h-20 px-4 py-3 sm:px-5">
+              <p className="text-xs text-muted-foreground">{cfg.label}</p>
+              {loading ? (
+                <Skeleton className="mt-2 h-7 w-12" />
+              ) : loadError ? (
+                <p className="mt-1 text-2xl font-medium text-muted-foreground">n/a</p>
+              ) : (
+                <p className={`mt-1 text-2xl font-semibold tabular-nums ${attention ? "text-amber-700 dark:text-amber-400" : "text-foreground"}`}>
+                  {value}
+                </p>
+              )}
+            </div>
+          )
+        })}
+      </section>
 
       {loading ? (
         <div className="grid gap-4 lg:grid-cols-3">

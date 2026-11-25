@@ -17,31 +17,34 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install Semgrep
-        run: pip install semgrep
-
-      - name: Semgrep - JSON report
+      - name: Install pinned Opengrep
         run: |
-          semgrep --config=auto \
-            --output=semgrep-report.json \
+          curl -fsSL https://github.com/opengrep/opengrep/releases/download/v1.30.0/opengrep_manylinux_x86 -o /tmp/opengrep
+          echo '35779bdd72e92129c8df2a77f0c55e8c08356801ea92591ef32108d6b28d564c  /tmp/opengrep' | sha256sum --check
+          install -m 0755 /tmp/opengrep /usr/local/bin/opengrep
+
+      - name: Opengrep - JSON report
+        run: |
+          opengrep scan --config p/security-audit \
+            --output=opengrep-report.json \
             --json \
             --exclude=node_modules \
             --exclude=vendor \
             backend/ frontend/
 
-      - name: Semgrep - SARIF report
+      - name: Opengrep - SARIF report
         run: |
-          semgrep --config=auto \
-            --output=semgrep-report.sarif \
+          opengrep scan --config p/security-audit \
+            --output=opengrep-report.sarif \
             --sarif \
             --exclude=node_modules \
             --exclude=vendor \
             backend/ frontend/
 
-      - name: Upload Semgrep SARIF to GitHub Security
+      - name: Upload Opengrep SARIF to GitHub Security
         uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: semgrep-report.sarif
+          sarif_file: opengrep-report.sarif
 
       - name: Trivy - JSON report
         uses: aquasecurity/trivy-action@master
@@ -73,5 +76,5 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           files: |
-            semgrep-report.json
+            opengrep-report.json
             trivy-report.json

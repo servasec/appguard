@@ -4,7 +4,7 @@
     }
 }
 
-%SSC_PUBLIC_DOMAIN% {
+%APPGUARD_PUBLIC_DOMAIN% {
     header /* {
         defer
         Server ""

@@ -5,10 +5,10 @@ import (
 	"fmt"
 
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/features"
-	"github.com/servasec/servasec/backend/models"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/features"
+	"github.com/servasec/appguard/backend/models"
+	"github.com/servasec/appguard/backend/utils"
 )
 
 type QuotaResource string

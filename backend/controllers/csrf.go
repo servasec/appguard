@@ -2,8 +2,8 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/middleware"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/middleware"
+	"github.com/servasec/appguard/backend/utils"
 )
 
 // GetCSRFToken returns a CSRF token for the current session

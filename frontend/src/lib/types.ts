@@ -1,11 +1,8 @@
-export type ThemeName = "light" | "dark" | "catppuccin" | "github" | "nord";
+export type ThemeName = "light" | "dark";
 
 export const THEMES: { name: ThemeName; label: string; dark: boolean }[] = [
   { name: "light", label: "Light", dark: false },
   { name: "dark", label: "Dark", dark: true },
-  { name: "catppuccin", label: "Catppuccin Mocha", dark: true },
-  { name: "github", label: "GitHub", dark: true },
-  { name: "nord", label: "Nord", dark: true },
 ];
 
 export interface User {
@@ -49,7 +46,29 @@ export interface ScannerType {
   name: string;
   description: string;
   parser: string;
+  category?: string;
+  formats?: string[];
   enabled: boolean;
+}
+
+export interface ScannerIntegration {
+  id: number;
+  applicationId: number;
+  scannerTypeId: number;
+  name: string;
+  category: string;
+  configuration: string;
+  status: "awaiting_report" | "connected" | "stale" | "error" | "paused" | "revoked";
+  isActive: boolean;
+  tokenPrefix: string;
+  applicationName?: string;
+  groupName?: string;
+  lastSeenAt?: string;
+  lastSuccessAt?: string;
+  lastError?: string;
+  scannerType: ScannerType;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface ApplicationVersion {
@@ -99,6 +118,8 @@ export interface ScanItem {
   applicationVersion: ApplicationVersion | null;
   scannerTypeId: number;
   scannerType: ScannerType | null;
+  integrationId?: number | null;
+  integration?: ScannerIntegration | null;
   status: string;
   startedAt: string | null;
   completedAt: string | null;

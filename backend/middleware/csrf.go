@@ -7,8 +7,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/csrf"
-	"github.com/servasec/servasec/backend/debug"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/debug"
+	"github.com/servasec/appguard/backend/utils"
 )
 
 var csrfSecret string
@@ -16,7 +16,7 @@ var csrfSecret string
 func InitCSRFProtection() {
 	csrfSecret = os.Getenv("CSRF_SECRET")
 	if csrfSecret == "" {
-		if os.Getenv("SSC_DEBUG_ENABLED") != "true" {
+		if os.Getenv("APPGUARD_DEBUG_ENABLED") != "true" {
 			log.Fatal("CSRF_SECRET must be set in production")
 		}
 		csrfSecret, _ = utils.GenerateRandomString(32)

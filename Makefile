@@ -1,11 +1,11 @@
-.PHONY: dev down down-clean prod down-prod community community-build pro pro-build dev-pro logs ps help swagger swagger-copy migrate-create migrate-status
+.PHONY: dev down down-clean prod down-prod community community-build pro pro-build dev-pro test logs ps help swagger swagger-copy migrate-create migrate-status
 
 COMPOSE_DEV  := USER_UID=$(shell id -u) USER_GID=$(shell id -g) GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.dev.yml
 COMPOSE_PROD := GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.prod.yml
 COMPOSE_BUILD := GIT_VERSION=$(shell ./scripts/version.sh) docker compose -f docker-compose.prod.yml -f docker-compose.build.yml
 
-SSC_PUBLIC_DOMAIN  ?= servasec.local
-PRO_REPO_DIR       ?= ../servasec-pro
+APPGUARD_PUBLIC_DOMAIN  ?= appguard.servasec.local
+PRO_REPO_DIR       ?= ../appguard-pro
 
 dev: ## Start dev stack
 	$(COMPOSE_DEV) up --build -d
@@ -24,16 +24,29 @@ community: ## Pull and start community prod images (registry.gitlab.com)
 community-build: ## Build and start community prod stack from source
 	$(COMPOSE_BUILD) up --build -d
 
-pro: ## Pull and start pro prod stack (requires docker login for the private servasec-pro project)
-	SSC_BACKEND_IMAGE=registry.gitlab.com/servasec/servasec-pro/backend $(COMPOSE_PROD) up -d
+pro: ## Pull and start pro prod stack (requires docker login for the private appguard-pro project)
+	APPGUARD_BACKEND_IMAGE=registry.gitlab.com/servasec/appguard-pro/backend $(COMPOSE_PROD) up -d
 
-pro-build: ## Build and start pro prod stack (requires servasec-pro repo)
-	cp $(PRO_REPO_DIR)/backend/pro/*.go backend/pro/
-	BUILD_TAGS=pro $(COMPOSE_BUILD) up --build -d
+pro-build: ## Build and start pro prod stack (requires appguard-pro repo)
+	@set -eu; \
+	mkdir -p .build; \
+	pro_context=$$(mktemp -d .build/appguard-pro-backend.XXXXXX); \
+	trap 'rm -rf "$$pro_context"' EXIT; \
+	cp -a backend/. "$$pro_context/"; \
+	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go "$$pro_context/pro/"; \
+	APPGUARD_BACKEND_CONTEXT="$$pro_context" BUILD_TAGS=pro $(COMPOSE_BUILD) up --build -d
 
-dev-pro: ## Start dev stack with pro features (requires servasec-pro repo)
-	cp $(PRO_REPO_DIR)/backend/pro/*.go backend/pro/
-	BUILD_TAGS=pro $(COMPOSE_DEV) up --build -d
+dev-pro: ## Start dev stack with pro features (requires appguard-pro repo)
+	@set -eu; \
+	mkdir -p .build; \
+	pro_context=$$(mktemp -d .build/appguard-pro-backend.XXXXXX); \
+	cp -a backend/. "$$pro_context/"; \
+	cp $(PRO_REPO_DIR)/backend/pro/impl_*.go "$$pro_context/pro/"; \
+	APPGUARD_BACKEND_CONTEXT="$$pro_context" BUILD_TAGS=pro $(COMPOSE_DEV) up --build -d
+
+test: ## Run backend tests, frontend type check, and frontend production build
+	cd backend && go test ./...
+	cd frontend && npm run lint && npx tsc --noEmit && npm run build
 
 down-prod: ## Stop prod stack
 	$(COMPOSE_PROD) down

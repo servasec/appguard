@@ -2,8 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/controllers"
-	"github.com/servasec/servasec/backend/middleware"
+	"github.com/servasec/appguard/backend/controllers"
+	"github.com/servasec/appguard/backend/middleware"
 )
 
 func RegisterApplicationRoutes(router *gin.Engine) {
@@ -25,6 +25,13 @@ func RegisterApplicationRoutes(router *gin.Engine) {
 		a.GET("/:id/versions/:versionId/findings", middleware.CheckPolicy("/applications/*", "read"), middleware.RequireResourceAccessByParam("applications", "id", "read"), controllers.GetVersionFindings)
 
 		a.POST("/:id/ingest", middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.IngestScan)
+		a.GET("/:id/integrations", middleware.CheckPolicy("/applications/*", "read"), middleware.RequireResourceAccessByParam("applications", "id", "read"), controllers.ListScannerIntegrations)
+		a.POST("/:id/integrations", middleware.RequireHumanAuth(), middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.CreateScannerIntegration)
+		a.PATCH("/:id/integrations/:integrationId", middleware.RequireHumanAuth(), middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.UpdateScannerIntegration)
+		a.POST("/:id/integrations/:integrationId/pause", middleware.RequireHumanAuth(), middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.PauseScannerIntegration)
+		a.POST("/:id/integrations/:integrationId/reconnect", middleware.RequireHumanAuth(), middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.ReconnectScannerIntegration)
+		a.POST("/:id/integrations/:integrationId/rotate-token", middleware.RequireHumanAuth(), middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.RotateScannerIntegrationToken)
+		a.DELETE("/:id/integrations/:integrationId", middleware.RequireHumanAuth(), middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.RevokeScannerIntegration)
 		a.GET("/:id/webhooks", middleware.CheckPolicy("/applications/*", "read"), middleware.RequireResourceAccessByParam("applications", "id", "read"), controllers.GetWebhooks)
 		a.POST("/:id/webhooks", middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.CreateWebhook)
 		a.DELETE("/:id/webhooks/:webhookId", middleware.CheckPolicy("/applications/*", "write"), middleware.RequireResourceAccessByParam("applications", "id", "write"), controllers.DeleteWebhook)
@@ -57,4 +64,7 @@ func RegisterApplicationRoutes(router *gin.Engine) {
 	{
 		publicIngest.POST("/ingest", middleware.RateLimit(30), controllers.IngestScan)
 	}
+
+	integrations := router.Group("/integrations", middleware.AuthRequired(), middleware.CSRFProtection())
+	integrations.GET("", middleware.CheckPolicy("/applications", "read"), controllers.ListAllScannerIntegrations)
 }

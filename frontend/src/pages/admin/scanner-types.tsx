@@ -62,7 +62,7 @@ export default function ScannerTypesPage() {
   return (
     <div className="space-y-6">
       <PageHeader crumbs={[
-        { label: "Administration", href: "#" },
+        { label: "Settings", href: "/settings" },
         { label: "Scanner Types" },
       ]} />
 

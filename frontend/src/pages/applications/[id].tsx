@@ -26,6 +26,7 @@ import type { Webhook, ScanItem, ApplicationVersion, Application, Group, Scanner
 import { statusScanColors } from "@/lib/constants";
 import { UserSearch } from "@/components/user-search";
 import { SeverityChart } from "@/components/findings/severity-chart";
+import { IntegrationGuide } from "@/components/applications/IntegrationGuide";
 
 export default function ApplicationDetailPage() {
   const router = useRouter();
@@ -62,10 +63,11 @@ export default function ApplicationDetailPage() {
   const [savingPerm, setSavingPerm] = useState(false);
   const [permTeams, setPermTeams] = useState<{ id: number; name: string }[]>([]);
 
-  const [activeTab, setActiveTab] = useState<"overview" | "versions" | "settings">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "integrations" | "versions" | "settings">("overview");
   const [versionFindings, setVersionFindings] = useState<{ severity: string }[]>([]);
   const [loadingFindings, setLoadingFindings] = useState(false);
   const [latestScan, setLatestScan] = useState<ScanItem | null>(null);
+  const [scans, setScans] = useState<ScanItem[]>([]);
   const [loadingScan, setLoadingScan] = useState(false);
   const [scanVersion, setScanVersion] = useState(0);
 
@@ -94,6 +96,10 @@ export default function ApplicationDetailPage() {
   }, [authChecked, loggedIn, router]);
 
   useEffect(() => {
+    if (router.query.tab === "integrations") setActiveTab("integrations");
+  }, [router.query.tab]);
+
+  useEffect(() => {
     if (authChecked && loggedIn && id) {
       fetchApp();
     }
@@ -114,9 +120,10 @@ export default function ApplicationDetailPage() {
     axios.get(`/api/scans?applicationId=${id}`)
       .then((res) => {
         const scans = res.data || [];
+        setScans(scans);
         setLatestScan(scans.length > 0 ? scans[0] : null);
       })
-      .catch(() => setLatestScan(null))
+      .catch(() => { setLatestScan(null); setScans([]); })
       .finally(() => setLoadingScan(false));
   }, [id, scanVersion]);
 
@@ -211,7 +218,18 @@ export default function ApplicationDetailPage() {
       setScanVersion((v) => v + 1);
       fetchApp();
     } catch (error: any) {
-      toast.error(error?.response?.data?.error || "Failed to upload scan");
+      const messages: Record<string, string> = {
+        invalid_api_token: "The project API token is invalid. Check or rotate the token used by your CI secret.",
+        unsupported_format: "AppGuard could not identify this report format. Choose a supported scanner or upload SARIF.",
+        unknown_scanner_type: "This scanner type is not supported by the current AppGuard scanner catalog.",
+        scanner_disabled: "This scanner type is currently disabled by an AppGuard administrator.",
+        parser_error: "The report was received, but AppGuard could not parse it. Check the scanner output format and version.",
+        integration_paused: "This scanner integration is paused. Reconnect it before sending reports.",
+        integration_scanner_mismatch: "The report scanner does not match the integration token used for upload.",
+        report_too_large: "The report exceeds AppGuard's 50 MB upload limit.",
+      };
+      const code = error?.response?.data?.code;
+      toast.error(messages[code] || error?.response?.data?.error || "Failed to upload scan");
     } finally {
       setIngesting(false);
     }
@@ -341,7 +359,7 @@ export default function ApplicationDetailPage() {
 
       <div className="border-b border-border">
         <div className="flex gap-0 -mb-px">
-          {(["overview", "versions", "settings"] as const).map((tab) => (
+          {(["overview", "integrations", "versions", "settings"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -452,6 +470,10 @@ export default function ApplicationDetailPage() {
             </Card>
           </div>
         </div>
+      )}
+
+      {activeTab === "integrations" && app && (
+        <IntegrationGuide application={app} scans={scans} onUpload={openIngest} />
       )}
 
       {activeTab === "versions" && (

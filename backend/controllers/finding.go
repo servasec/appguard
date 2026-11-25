@@ -7,10 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
-	"github.com/servasec/servasec/backend/services"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
+	"github.com/servasec/appguard/backend/services"
+	"github.com/servasec/appguard/backend/utils"
 )
 
 func buildFindingsQuery(c *gin.Context) *gorm.DB {

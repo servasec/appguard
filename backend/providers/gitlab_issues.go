@@ -47,7 +47,7 @@ func (g *GitLabIssueTracker) projectPath(cfg IssueTrackerConfig) string {
 }
 
 func (g *GitLabIssueTracker) CreateIssue(cfg IssueTrackerConfig, finding IssueData) (*ExternalIssue, error) {
-	labels := "servasec,security"
+	labels := "appguard,security"
 	if sevLabel, ok := SeverityLabels[finding.Severity]; ok {
 		labels += "," + sevLabel
 	}

@@ -12,9 +12,9 @@ import (
 )
 
 func GetEncryptionKey() ([]byte, error) {
-	keyEnv := os.Getenv("SSC_FEATURES_ENCRYPTION_KEY")
+	keyEnv := os.Getenv("APPGUARD_FEATURES_ENCRYPTION_KEY")
 	if keyEnv == "" {
-		return nil, fmt.Errorf("SSC_FEATURES_ENCRYPTION_KEY environment variable is not set")
+		return nil, fmt.Errorf("APPGUARD_FEATURES_ENCRYPTION_KEY environment variable is not set")
 	}
 	hash := sha256.Sum256([]byte(keyEnv))
 	return hash[:], nil

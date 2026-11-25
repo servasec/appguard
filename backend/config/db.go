@@ -4,8 +4,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/servasec/servasec/backend/debug"
-	"github.com/servasec/servasec/backend/migrations"
+	"github.com/servasec/appguard/backend/debug"
+	"github.com/servasec/appguard/backend/migrations"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -36,7 +36,7 @@ func ConnectDB() *gorm.DB {
 
 	DB = db
 
-	if os.Getenv("SSC_SEED_DATABASE") == "true" {
+	if os.Getenv("APPGUARD_SEED_DATABASE") == "true" {
 		SeedDatabase()
 	}
 	return db

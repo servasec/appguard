@@ -1,6 +1,6 @@
 {
   "version": "1",
-  "name": "servasec",
+  "name": "appguard",
   "type": "collection",
   "ignore": [
     "node_modules",

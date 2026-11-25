@@ -98,7 +98,7 @@ export default function SsoSettingsPage() {
   if (loadError) {
     return (
       <div className="space-y-6">
-        <PageHeader crumbs={[{ label: "Administration", href: "#" }, { label: "SSO / Single Sign-On" }]} />
+        <PageHeader crumbs={[{ label: "Settings", href: "/settings" }, { label: "Single sign-on" }]} />
         <Card>
           <CardContent className="py-12 text-center text-muted-foreground">
             <ShieldAlert className="h-8 w-8 mx-auto mb-2 opacity-40" />
@@ -112,7 +112,7 @@ export default function SsoSettingsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader crumbs={[{ label: "Administration", href: "#" }, { label: "SSO / Single Sign-On" }]} />
+      <PageHeader crumbs={[{ label: "Settings", href: "/settings" }, { label: "Single sign-on" }]} />
 
       <Tabs defaultValue="github">
         <TabsList>

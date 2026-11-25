@@ -1,21 +1,23 @@
 package controllers
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
-	"github.com/servasec/servasec/backend/parsers"
-	"github.com/servasec/servasec/backend/pro"
-	"github.com/servasec/servasec/backend/providers"
-	"github.com/servasec/servasec/backend/services"
-	"github.com/servasec/servasec/backend/utils"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
+	"github.com/servasec/appguard/backend/parsers"
+	"github.com/servasec/appguard/backend/pro"
+	"github.com/servasec/appguard/backend/providers"
+	"github.com/servasec/appguard/backend/services"
+	"github.com/servasec/appguard/backend/utils"
 	"gorm.io/gorm"
 )
 
@@ -31,10 +33,26 @@ func findApplication(c *gin.Context) (*models.Application, error) {
 	if apiToken != "" {
 		var app models.Application
 		hashStr := utils.HashToHex(apiToken)
-		if err := config.DB.Where("api_token = ?", hashStr).First(&app).Error; err != nil {
+		if err := config.DB.Where("api_token = ?", hashStr).First(&app).Error; err == nil {
+			return &app, nil
+		}
+		var integration models.ScannerIntegration
+		if err := config.DB.Where("token_hash = ?", hashStr).First(&integration).Error; err != nil {
+			if strings.HasPrefix(apiToken, "ig_") {
+				c.Set("integration_auth_error", "invalid_integration_token")
+			}
 			return nil, fmt.Errorf("invalid API token")
 		}
-		return &app, nil
+		if !integration.IsActive || integration.Status == "paused" {
+			c.Set("integration_auth_error", "integration_paused")
+			return nil, fmt.Errorf("scanner integration is paused")
+		}
+		var integrationApp models.Application
+		if err := config.DB.First(&integrationApp, integration.ApplicationID).Error; err != nil {
+			return nil, fmt.Errorf("application not found")
+		}
+		c.Set("ingest_integration", &integration)
+		return &integrationApp, nil
 	}
 
 	idParam := c.Param("id")
@@ -52,6 +70,10 @@ func findApplication(c *gin.Context) (*models.Application, error) {
 		return nil, fmt.Errorf("application not found")
 	}
 	return &app, nil
+}
+
+func ingestError(c *gin.Context, status int, code, message string) {
+	c.JSON(status, gin.H{"code": code, "error": message})
 }
 
 func upsertVersion(appID uint, name, branch string) (*models.ApplicationVersion, error) {
@@ -96,7 +118,17 @@ func upsertVersion(appID uint, name, branch string) (*models.ApplicationVersion,
 func IngestScan(c *gin.Context) {
 	app, err := findApplication(c)
 	if err != nil {
-		utils.NotFoundError(c, err.Error())
+		if c.GetHeader("X-Api-Token") != "" {
+			if code := c.GetString("integration_auth_error"); code == "integration_paused" {
+				ingestError(c, http.StatusForbidden, code, err.Error())
+			} else if code == "invalid_integration_token" {
+				ingestError(c, http.StatusUnauthorized, code, "invalid integration token")
+			} else {
+				ingestError(c, http.StatusUnauthorized, "invalid_api_token", "invalid API token")
+			}
+		} else {
+			ingestError(c, http.StatusNotFound, "application_not_found", err.Error())
+		}
 		return
 	}
 
@@ -139,14 +171,19 @@ func IngestScan(c *gin.Context) {
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxIngestFileSize)
 	file, header, err := c.Request.FormFile("file")
 	if err != nil {
-		utils.BadRequestError(c, "file is required")
+		var maxBytesError *http.MaxBytesError
+		if c.Request.ContentLength > maxIngestFileSize || errors.As(err, &maxBytesError) {
+			ingestError(c, http.StatusRequestEntityTooLarge, "report_too_large", "report exceeds the 50 MB limit")
+		} else {
+			ingestError(c, http.StatusBadRequest, "file_required", "file is required")
+		}
 		return
 	}
 	defer file.Close()
 
 	data, err := io.ReadAll(file)
 	if err != nil {
-		utils.BadRequestError(c, "failed to read file or file too large (max 50MB)")
+		ingestError(c, http.StatusRequestEntityTooLarge, "report_too_large", "failed to read report or report exceeds the 50 MB limit")
 		return
 	}
 
@@ -154,7 +191,8 @@ func IngestScan(c *gin.Context) {
 	var format string
 	if scannerTypeName != "" {
 		if err := config.DB.Where("name = ?", scannerTypeName).First(&scannerType).Error; err != nil {
-			utils.BadRequestError(c, fmt.Sprintf("unknown scanner type: %s", scannerTypeName))
+			markIngestIntegrationError(c, nil, "unknown scanner type")
+			ingestError(c, http.StatusBadRequest, "unknown_scanner_type", fmt.Sprintf("unknown scanner type: %s", scannerTypeName))
 			return
 		}
 		if scannerTypeName == "sarif" {
@@ -177,12 +215,27 @@ func IngestScan(c *gin.Context) {
 		}
 	}
 	if scannerType.ID == 0 {
-		utils.BadRequestError(c, "could not determine scanner type")
+		markIngestIntegrationError(c, nil, "could not determine scanner type from this report")
+		ingestError(c, http.StatusBadRequest, "unsupported_format", "could not determine scanner type from this report")
 		return
 	}
+	integration, integrationErr := resolveIngestIntegration(c, app.ID, scannerType.ID)
+	if integrationErr != nil {
+		if !strings.Contains(integrationErr.Error(), "paused") {
+			markIngestIntegrationError(c, integration, integrationErr.Error())
+		}
+		code := "integration_scanner_mismatch"
+		if strings.Contains(integrationErr.Error(), "paused") {
+			code = "integration_paused"
+		}
+		ingestError(c, http.StatusForbidden, code, integrationErr.Error())
+		return
+	}
+	integrationID := integrationID(integration)
 
 	if !scannerType.Enabled {
-		utils.BadRequestError(c, fmt.Sprintf("scanner type '%s' has been disabled by an administrator", scannerType.Name))
+		markIngestIntegrationError(c, integration, "scanner type is disabled")
+		ingestError(c, http.StatusBadRequest, "scanner_disabled", fmt.Sprintf("scanner type '%s' has been disabled by an administrator", scannerType.Name))
 		return
 	}
 
@@ -197,12 +250,18 @@ func IngestScan(c *gin.Context) {
 		scan := models.Scan{
 			ApplicationVersionID: version.ID,
 			ScannerTypeID:        scannerType.ID,
+			IntegrationID:        integrationID,
 			Status:               "completed",
 			StartedAt:            &now,
 			CompletedAt:          &now,
 			RawResults:           &rawStr,
 		}
-		if err := config.DB.Create(&scan).Error; err != nil {
+		if err := config.DB.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Create(&scan).Error; err != nil {
+				return err
+			}
+			return updateIngestIntegration(tx, integration, "connected", true, "")
+		}); err != nil {
 			utils.InternalServerError(c, "failed to create scan")
 			return
 		}
@@ -223,13 +282,22 @@ func IngestScan(c *gin.Context) {
 		scan := models.Scan{
 			ApplicationVersionID: version.ID,
 			ScannerTypeID:        scannerType.ID,
+			IntegrationID:        integrationID,
 			Status:               "failed",
 			StartedAt:            &now,
 			CompletedAt:          &now,
 			RawResults:           &rawStr,
 		}
-		config.DB.Create(&scan)
-		utils.InternalServerError(c, fmt.Sprintf("failed to parse results: %v", err))
+		if txErr := config.DB.Transaction(func(tx *gorm.DB) error {
+			if err := tx.Create(&scan).Error; err != nil {
+				return err
+			}
+			return updateIngestIntegration(tx, integration, "error", false, err.Error())
+		}); txErr != nil {
+			utils.InternalServerError(c, "failed to store scan parser error")
+			return
+		}
+		ingestError(c, http.StatusUnprocessableEntity, "parser_error", fmt.Sprintf("failed to parse results: %v", err))
 		return
 	}
 
@@ -244,6 +312,7 @@ func IngestScan(c *gin.Context) {
 		scanResult = models.Scan{
 			ApplicationVersionID: version.ID,
 			ScannerTypeID:        scannerType.ID,
+			IntegrationID:        integrationID,
 			Status:               "completed",
 			StartedAt:            &now,
 			CompletedAt:          &now,
@@ -251,6 +320,9 @@ func IngestScan(c *gin.Context) {
 		}
 		if err := tx.Create(&scanResult).Error; err != nil {
 			return fmt.Errorf("create scan: %w", err)
+		}
+		if err := updateIngestIntegration(tx, integration, "connected", true, ""); err != nil {
+			return fmt.Errorf("update integration: %w", err)
 		}
 
 		// Deduplicate within the application version

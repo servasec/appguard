@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  pro-backend:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    env:
+      PRO_APP_ID: ${{ secrets.PRO_APP_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Require private Pro repository access
+        if: ${{ env.PRO_APP_ID == '' }}
+        run: echo "PRO_APP_ID is required to validate the AppGuard Pro build" && exit 1
+      - name: Generate app token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.PRO_APP_ID }}
+          private-key: ${{ secrets.PRO_APP_PRIVATE_KEY }}
+          owner: servasec
+          repositories: appguard-pro
+      - name: Checkout Pro implementation
+        uses: actions/checkout@v4
+        with:
+          repository: servasec/appguard-pro
+          token: ${{ steps.app-token.outputs.token }}
+          path: pro
+          ref: rename/appguard
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: Build and test with Pro implementations
+        run: |
+          mkdir -p /tmp/appguard-pro-context
+          cp -a backend/. /tmp/appguard-pro-context/
+          cp pro/backend/pro/impl_*.go /tmp/appguard-pro-context/pro/
+          cd /tmp/appguard-pro-context
+          go test -tags pro ./...
+          go build -tags pro ./...
+
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+          cache-dependency-path: backend/go.sum
+      - name: Run Go tests
+        working-directory: backend
+        run: go test ./...
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.23.4
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Type check
+        working-directory: frontend
+        run: npx tsc --noEmit
+      - name: Lint
+        working-directory: frontend
+        run: npm run lint
+      - name: Production build
+        working-directory: frontend
+        run: npm run build
+
+  helm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: azure/setup-helm@v4
+      - name: Validate chart
+        run: |
+          helm lint deploy/helm/appguard -f deploy/helm/appguard/ci/test-values.yaml
+          helm template appguard deploy/helm/appguard -f deploy/helm/appguard/ci/test-values.yaml >/dev/null
+
+  opengrep:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pinned Opengrep
+        run: |
+          curl -fsSL https://github.com/opengrep/opengrep/releases/download/v1.30.0/opengrep_manylinux_x86 -o /tmp/opengrep
+          echo '35779bdd72e92129c8df2a77f0c55e8c08356801ea92591ef32108d6b28d564c  /tmp/opengrep' | sha256sum --check
+          install -m 0755 /tmp/opengrep /usr/local/bin/opengrep
+      - name: SAST
+        run: opengrep scan --config p/security-audit --error backend frontend

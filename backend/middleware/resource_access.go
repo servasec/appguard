@@ -7,8 +7,8 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/servasec/servasec/backend/config"
-	"github.com/servasec/servasec/backend/models"
+	"github.com/servasec/appguard/backend/config"
+	"github.com/servasec/appguard/backend/models"
 )
 
 func resolveGroupAccess(uid uint, resourcePath string, action string) bool {
@@ -116,6 +116,16 @@ func RequireResourceAccessByParam(resourceType string, paramName string, action 
 		resourceID := c.Param(paramName)
 		resourcePath := fmt.Sprintf("/%s/%s", resourceType, resourceID)
 		RequireResourceAccess(resourcePath, action)(c)
+	}
+}
+
+func RequireHumanAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if c.GetString("auth_method") == "app_token" {
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "user authentication is required"})
+			return
+		}
+		c.Next()
 	}
 }
 
