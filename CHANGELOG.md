@@ -1,5 +1,35 @@
 # Changelog
 
+## [3.0.0](https://github.com/servasec/appguard/compare/v2.6.0...v3.0.0) (2026-11-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* servasec project renammed to appguard
+
+### 🧩 Features
+
+* Add new scanners ([27363c0](https://github.com/servasec/appguard/commit/27363c0aadb60b6cd58c6283883403ee0b755171))
+* Add repository integrations and polish AppGuard UI ([7af50d6](https://github.com/servasec/appguard/commit/7af50d6b5e3dbedcbf0671f27f4d6b07a3ab30dd))
+* Servasec project renammed to appguard ([8ea6495](https://github.com/servasec/appguard/commit/8ea64958d7dac110fd87bebed18199ca8ab69274))
+
+
+### 🐛 Bug fixes
+
+* Align AppGuard brand assets and palette ([fedda11](https://github.com/servasec/appguard/commit/fedda11b37fd3c1bd3578cb4a8098c12ed061579))
+* Align AppGuard development host ([1b11527](https://github.com/servasec/appguard/commit/1b1152795b40774e7104a9be30c911a7ff741c49))
+* Appguard com name ([f10d2f1](https://github.com/servasec/appguard/commit/f10d2f1bc06d4e33708e3529474b10608d440e3d))
+* Front brand typo ([535a8ab](https://github.com/servasec/appguard/commit/535a8abd17c23485033c6d6b9e25fca4f00047db))
+* Harden security scans and dependencies ([82ab074](https://github.com/servasec/appguard/commit/82ab074ae97fc95b73be9a55399e32c30065b9cf))
+* Isolate AppGuard Pro build context ([3c7e979](https://github.com/servasec/appguard/commit/3c7e979f639dbf51fd9a0fd77e07eddd49717816))
+* Pin frontend Node runtime to patched release ([47ece36](https://github.com/servasec/appguard/commit/47ece362ac68868434680ab36897aa18cea992b6))
+* Restore vivid violet accent ([ce87c82](https://github.com/servasec/appguard/commit/ce87c82959d4a4923dd190b63e07d794efe7ddf8))
+
+
+### 📝 Documentation
+
+* Update AppGuard portal links ([d138ea3](https://github.com/servasec/appguard/commit/d138ea3e585170e88a45ebe5f4cf8604799639c3))
+
 ## [2.6.0](https://github.com/servasec/servasec/compare/v2.5.3...v2.6.0) (2026-09-03)
 
 
